@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Navbar from '../Components/NavigationBar.jsx' 
 import AboutPage from '../Components/Pages/AboutPage.jsx';
+import HealthcarePage from '../Components/Pages/HealthcarePage.jsx';
 import './App.css'
 
 // 1. Define your mockData and domainOrder here or import them from another file
@@ -45,8 +46,9 @@ function App() {
             {/* Placeholder route for the About page */}
             <Route path="/about" element={<AboutPage />} />
 
-            {/* Example route placeholder for your domain content */}
-            <Route path="/:domainId" element={<div>Domain Content Goes Here</div>} />
+            <Route path="/diabetes" element={<HealthcarePage />} />
+
+         
           </Routes>
         </main>
 
