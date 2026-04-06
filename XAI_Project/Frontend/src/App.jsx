@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Navbar from '../Components/NavigationBar.jsx' 
-import AboutPage from '../Components/AboutPage.jsx';
+import AboutPage from '../Components/Pages/AboutPage.jsx';
 import './App.css'
 
 // 1. Define your mockData and domainOrder here or import them from another file
