@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import Navbar from '../Components/NavigationBar.jsx' // Make sure this path matches where you saved the file
+import Navbar from '../Components/NavigationBar.jsx' 
+import AboutPage from '../Components/AboutPage.jsx';
 import './App.css'
 
 // 1. Define your mockData and domainOrder here or import them from another file
@@ -42,7 +43,7 @@ function App() {
             <Route path="/" element={<Navigate to="/about" replace />} />
             
             {/* Placeholder route for the About page */}
-            <Route path="/about" element={<div>About Page Content Goes Here</div>} />
+            <Route path="/about" element={<AboutPage />} />
 
             {/* Example route placeholder for your domain content */}
             <Route path="/:domainId" element={<div>Domain Content Goes Here</div>} />
