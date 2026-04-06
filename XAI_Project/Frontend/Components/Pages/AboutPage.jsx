@@ -7,7 +7,8 @@ import {
   SlidersHorizontal, 
   RefreshCw 
 } from 'lucide-react';
-import ExplanationCard from './ExplanationCard';
+
+import ExplanationCard from '../UI/ExplanationCard';
 
 export default function AboutPage() {
   const navigate = useNavigate();
