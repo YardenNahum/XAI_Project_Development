@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import Navbar from '../Components/NavigationBar.jsx' // Make sure this path matches where you saved the file
+import Navbar from '../Components/NavigationBar.jsx' 
 import './App.css'
 
 // 1. Define your mockData and domainOrder here or import them from another file
