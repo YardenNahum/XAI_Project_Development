@@ -1,22 +1,17 @@
 import React from 'react';
 
 /**
- * A reusable UI component that displays the AI's primary prediction.
- * Located in: Frontend/Components/UI/PredictionSummary.jsx
- * * Props:
- * - title: The name of the prediction (e.g., "Diabetes Risk")
- * - description: A short sentence about what is being predicted
- * - predictionValue: The text of the result (e.g., "High Risk")
- * - confidence: A number 0-100 for the percentage
- * - colorClass: Tailwind color for the prediction text (e.g., "text-red-600")
- * - icon: Lucide icon component for the domain
+ * PredictionSummary Component
+ * Props:
+ * - title: String - The title of the prediction
+ * - description: String - A brief description of the prediction context
+ * - predictionValue: String - The predicted outcome
+ * - icon: React Component (optional) - An icon to visually represent the domain
  */
 export default function PredictionSummary({ 
   title, 
   description, 
   predictionValue, 
-  confidence, 
-  colorClass,
   icon: Icon 
 }) {
   return (
@@ -35,31 +30,18 @@ export default function PredictionSummary({
       </div>
 
       {/* Right Side: The Prediction Result */}
-      <div className="w-full md:w-auto min-w-[200px] bg-white border-2 border-slate-50 rounded-2xl p-4 shadow-sm relative overflow-hidden">
-        <div className="flex flex-col items-end">
+      <div className="w-full md:w-auto min-w-[200px] bg-slate-50 border border-slate-100 rounded-2xl p-4 shadow-inner relative overflow-hidden">
+        <div className="flex flex-col items-end relative z-10">
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
             Prediction
           </span>
-          <span className={`text-xl font-black ${colorClass}`}>
+          <span className="text-xl font-black text-slate-800 tracking-tight">
             {predictionValue}
           </span>
-          
-          {/* Progress Bar Container */}
-          <div className="w-full mt-3 space-y-1">
-            <div className="flex justify-between items-center text-[10px] font-bold text-slate-500">
-              <div className="h-1.5 flex-1 bg-slate-100 rounded-full overflow-hidden mr-3">
-                <div 
-                  className={`h-full transition-all duration-1000 ${colorClass.replace('text', 'bg')}`}
-                  style={{ width: `${confidence}%` }}
-                />
-              </div>
-              <span>{confidence}%</span>
-            </div>
-          </div>
         </div>
         
         {/* Subtle background decoration */}
-        <div className={`absolute -right-4 -bottom-4 opacity-5 ${colorClass}`}>
+        <div className="absolute -right-4 -bottom-4 opacity-[0.03] text-slate-900 z-0 pointer-events-none">
           {Icon && <Icon size={80} />}
         </div>
       </div>

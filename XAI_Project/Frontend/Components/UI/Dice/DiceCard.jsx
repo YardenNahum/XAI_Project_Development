@@ -1,69 +1,94 @@
 import React, { useState } from 'react';
-import { RotateCcw } from 'lucide-react';
+import { Shuffle } from 'lucide-react';
 import DiceScenario from './DiceScenario.jsx';
 import DiceFeatureChange from './DiceFeatureChange.jsx';
 
-/**
- * DiceCard - Main container for DiCE counterfactuals.
- */
-export default function DiceCard({ scenarios }) {
+export default function DiceCard({ data }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const defaultItemsCount = 2;
-  const visibleScenarios = isExpanded ? scenarios : scenarios.slice(0, defaultItemsCount);
-  const hasMoreItems = scenarios.length > defaultItemsCount;
+  
+  if (!data) return null;
 
-  if (!scenarios || scenarios.length === 0) return null;
+  // 1. Transform Data
+  const scenarioEntries = Object.entries(data).map(([key, value]) => ({
+    id: key,
+    displayName: key.replace('_', ' ').toUpperCase(),
+    outcome: value.new_target,
+    changes: value.Changes ? value.Changes.map(c => ({ 
+      label: c.feature, 
+      newValue: c.change 
+    })) : []
+  }));
+
+  // 2. LIMIT LOGIC
+  const SCENARIO_LIMIT = 4; // Show max 4 scenarios
+  const FEATURE_LIMIT = 3;  // Show max 3 features per scenario before expanding
+
+  // Determine which scenarios to show
+  const visibleScenarios = isExpanded 
+    ? scenarioEntries 
+    : scenarioEntries.slice(0, SCENARIO_LIMIT);
+
+  const hasMoreScenarios = scenarioEntries.length > SCENARIO_LIMIT;
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
-      
-      {/* Header - Matches SHAP/LIME style */}
-      <div className="flex items-center gap-2 mb-6">
-        <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
-          <RotateCcw size={18} />
-        </div>
-        <h3 className="text-lg font-extrabold text-slate-900 tracking-tight">
-          DiCE Counterfactuals
-        </h3>
+    <div className="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm">
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-6 text-slate-400 font-bold text-xs uppercase tracking-wider">
+        <Shuffle size={14} />
+        <span>Counterfactual Explanations (DiCE)</span>
       </div>
+
+      <h3 className="text-lg font-extrabold text-slate-900 tracking-tight mb-2">
+        DiCE
+      </h3>
+      <p className="text-sm text-slate-500 mb-6 font-medium">
+        Review the following adjustments to reach a different target outcome:
+      </p>
 
       {/* Scenarios List */}
-      <div className="space-y-4">
-        {visibleScenarios.map((scenario, idx) => (
-          <div 
-            key={idx} 
-            className="border border-slate-100 rounded-2xl flex flex-col md:flex-row overflow-hidden hover:border-indigo-50 transition-colors"
-          >
-            {/* Left Side: Scenario Number and Outcome */}
-            <div className="p-4 md:w-1/3 flex flex-col justify-center bg-slate-50/30 border-b md:border-b-0 md:border-r border-slate-100">
-              <div className="text-[10px] font-black text-slate-300 uppercase tracking-widest mb-2">
-                Scenario {idx + 1}
+      <div className="space-y-6">
+        {visibleScenarios.map((scenario) => {
+          // Limit internal features unless expanded
+          const displayChanges = isExpanded 
+            ? scenario.changes 
+            : scenario.changes.slice(0, FEATURE_LIMIT);
+            
+          return (
+            <div key={scenario.id} className="p-5 bg-slate-50/30 rounded-2xl border border-slate-100 transition-all">
+              <DiceScenario outcome={scenario.outcome} />
+              
+              <div className="mt-4 flex flex-col">
+                {displayChanges.map((change, idx) => (
+                  <DiceFeatureChange 
+                    key={idx} 
+                    label={change.label} 
+                    newValue={change.newValue} 
+                  />
+                ))}
+                
+                {/* Visual indicator if features are hidden inside a scenario */}
+                {!isExpanded && scenario.changes.length > FEATURE_LIMIT && (
+                  <div className="px-8 py-2 text-[10px] font-bold text-slate-400 italic">
+                    + {scenario.changes.length - FEATURE_LIMIT} more changes in this scenario...
+                  </div>
+                )}
               </div>
-              <DiceScenario outcome={scenario.outcome} probability={scenario.probability} />
             </div>
-
-            {/* Right Side: Feature Changes */}
-            <div className="p-3 flex-1 bg-slate-50/50 space-y-2">
-              {scenario.changes.map((change, cIdx) => (
-                <DiceFeatureChange 
-                  key={cIdx}
-                  label={change.label}
-                  oldValue={change.oldValue}
-                  newValue={change.newValue}
-                />
-              ))}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      {/* View All Button - Matches SHAP/LIME size */}
-      {hasMoreItems && (
+      {/* Global View More Button */}
+      {(hasMoreScenarios || scenarioEntries.some(s => s.changes.length > FEATURE_LIMIT)) && (
         <button 
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full mt-6 py-2.5 text-xs font-bold text-indigo-700 bg-indigo-50 rounded-xl hover:bg-indigo-100 transition-all active:scale-[0.98]"
+          className="w-full mt-6 py-4 text-xs font-black text-indigo-700 bg-indigo-50/50 border border-indigo-100 rounded-2xl hover:bg-indigo-100 transition-all active:scale-[0.98] shadow-sm"
         >
-          {isExpanded ? 'View Less' : `View All ${scenarios.length} Scenarios`}
+          {isExpanded ? (
+            'Show Less'
+          ) : (
+            `View All Scenarios & Detailed Changes`
+          )}
         </button>
       )}
     </div>

@@ -1,58 +1,103 @@
 import React, { useState } from 'react';
-import { SlidersHorizontal } from 'lucide-react';
+import { Target, ChevronDown, ChevronUp } from 'lucide-react'; 
+import TextualLimeView from './TextualLimeView.jsx';
+import TabularLimeView from './TabularLimeView.jsx';
 
 /**
- * LimeCard - Updated to match the font sizes of ShapCard and PredictionSummary.
+ * LimeCard - Main container for LIME explanations with Expand/Collapse.
  */
 export default function LimeCard({ data }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const defaultItemsCount = 3;
-  
-  const visibleRules = isExpanded ? data : data.slice(0, defaultItemsCount);
-  const hasMoreItems = data.length > defaultItemsCount;
+
+  if (!data || !data.Type) return null;
+
+  // --- CONFIGURATION ---
+  // Number of features/items to show before truncating
+  const INITIAL_LIMIT = 5; 
+  const featureList = data.features || [];
+  const hasMore = featureList.length > INITIAL_LIMIT;
+
+  // Slice the data if not expanded
+  const displayFeatures = isExpanded 
+    ? featureList 
+    : featureList.slice(0, INITIAL_LIMIT);
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm">
+    <div className="bg-white rounded-3xl border border-slate-100 p-6 md:p-8 shadow-sm transition-all duration-300">
       
-      {/* Header - Changed to text-lg and font-extrabold to match ShapCard */}
-      <div className="flex items-center gap-2 mb-6">
-        <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
-          <SlidersHorizontal size={18} />
+      {/* 1. Header */}
+      <div className="flex items-center gap-3 mb-8">
+        <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl">
+          <Target size={20} className="stroke-[2.5]" />
         </div>
-        <h3 className="text-lg font-extrabold text-slate-900 tracking-tight">
-          LIME Local Rules
-        </h3>
+        <div className="flex flex-col">
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
+            Local Explanation
+          </span>
+          <h3 className="text-xl font-extrabold text-slate-900 tracking-tight leading-none">
+            LIME Feature Impact
+          </h3>
+        </div>
       </div>
 
-      {/* Rules List */}
-      <div className="space-y-3">
-        {visibleRules.map((item, index) => (
-          <div 
-            key={index} 
-            className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 border border-slate-100 hover:bg-emerald-50 transition-colors group"
-          >
-            {/* Percentage Badge - Smaller text (text-xs) to match UI feel */}
-            <div className="py-1 px-2 bg-red-100 text-red-700 rounded-lg text-xs font-black min-w-[50px] text-center">
-              {item.percentage}
-            </div>
-            
-            {/* Rule Text - Matches text-sm font-bold of the ShapBar labels */}
-            <span className="text-sm font-bold text-slate-700 font-mono tracking-tight">
-              {item.rule}
-            </span>
-          </div>
-        ))}
+      {/* 2. Content Router */}
+      <div className="space-y-6">
+        {(() => {
+          switch (data.Type) {
+            case 'Textual':
+              return (
+                <TextualLimeView 
+                  text={data.Original_Text} 
+                  // If Textual view handles its own truncation, pass the full list.
+                  // Otherwise, pass displayFeatures to truncate highlights.
+                  highlights={isExpanded ? data.features : data.features.slice(0, 15)} 
+                />
+              );
+            case 'Tabular':
+              return (
+                <TabularLimeView 
+                  predictions={data.Prediction} 
+                  features={displayFeatures} 
+                />
+              );
+            default:
+              return (
+                <div className="p-6 text-center bg-slate-50 rounded-2xl border border-slate-100 text-rose-500 font-bold">
+                  Unknown LIME format: "{data.Type}"
+                </div>
+              );
+          }
+        })()}
       </div>
 
-      {/* View More / Less Button */}
-      {hasMoreItems && (
-        <button 
+      {/* 3. Show More / Less Button */}
+      {hasMore && (
+        <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full mt-5 py-2.5 text-xs font-bold text-emerald-700 bg-emerald-50 rounded-xl hover:bg-emerald-100 transition-all active:scale-[0.98]"
+          className="w-full mt-6 py-3 flex items-center justify-center gap-2 text-xs font-black text-indigo-600 bg-indigo-50/50 rounded-xl hover:bg-indigo-100 transition-all border border-indigo-100/50 active:scale-[0.98]"
         >
-          {isExpanded ? 'View Less' : `View All ${data.length} Rules`}
+          {isExpanded ? (
+            <>
+              <span>Show Less</span>
+              <ChevronUp size={14} />
+            </>
+          ) : (
+            <>
+              <span>View All {featureList.length} Contributions</span>
+              <ChevronDown size={14} />
+            </>
+          )}
         </button>
       )}
+      
+      {/* 4. Footer Polish */}
+      <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-center gap-2">
+        <div className="h-1 w-1 bg-slate-300 rounded-full" />
+        <span className="text-[10px] font-black text-slate-400 uppercase tracking-tight">
+          LIME approximates the model locally for this specific instance.
+        </span>
+        <div className="h-1 w-1 bg-slate-300 rounded-full" />
+      </div>
     </div>
   );
 }

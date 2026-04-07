@@ -13,7 +13,7 @@ router.get("/:domain/:id", async (req, res) => {
     // Get a reference to the Database
     const db = admin.database();
     
-    // Point to the specific ID (the "2" in your screenshot)
+    // Point to the specific ID 
     const ref = db.ref(`Reports/${domain}/${id}`);
 
     // Take a snapshot of that location

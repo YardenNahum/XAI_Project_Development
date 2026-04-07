@@ -1,19 +1,28 @@
 import React from 'react';
+import { Target, CheckCircle2 } from 'lucide-react';
 
 /**
- * DiceScenario - Outcome badge for the DiCE card.
+ * DiceScenario - A streamlined outcome header focused strictly on the goal.
  */
-export default function DiceScenario({ outcome, probability }) {
+export default function DiceScenario({ outcome }) {
+  console.log("Rendering DiceScenario with outcome:", outcome);
   return (
-    <div className="bg-indigo-50 border border-indigo-100 p-3 rounded-xl text-center w-full">
-      <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">
-        Target
+    <div className="flex items-center gap-3 w-full bg-indigo-50/50 border border-indigo-100/50 px-4 py-3 rounded-xl">
+      {/* Icon Badge */}
+      <div className="p-2 bg-white rounded-lg shadow-sm border border-indigo-100 shrink-0">
+        <Target size={16} className="text-indigo-600" />
       </div>
-      <div className="text-sm font-black text-indigo-800">
-        {outcome}
-      </div>
-      <div className="text-[10px] font-bold text-indigo-600">
-        ({probability})
+      
+      {/* Outcome Text */}
+      <div className="flex flex-col">
+        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">
+          Target Result
+        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-black text-indigo-900">
+            {outcome}
+          </span>
+        </div>
       </div>
     </div>
   );

@@ -1,25 +1,24 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
 
 /**
- * DiceFeatureChange - Individual feature row for the DiCE card.
+ * DiceFeatureChange - Ultra-clean version.
+ * No "change" or "to" words. Just Feature: New Value.
  */
-export default function DiceFeatureChange({ label, oldValue, newValue }) {
+export default function DiceFeatureChange({ label, newValue }) {
   return (
-    <div className="flex items-center gap-4 p-3 rounded-xl bg-white border border-slate-100 group hover:border-indigo-100 transition-all">
-      <span className="text-xs font-bold text-slate-700 font-mono tracking-tight flex-1">
-        {label}
+    <div className="flex items-center py-2 px-2 group">
+      {/* 1. Subtle Dot */}
+      <div className="w-1 h-1 rounded-full bg-slate-300 mr-3 shrink-0" />
+
+      {/* 2. Feature Name */}
+      <span className="text-sm font-bold text-slate-600 capitalize">
+        {label.replace(/_/g, ' ')}:
       </span>
-      
-      <div className="flex items-center gap-2 py-1 px-2 bg-slate-50 rounded-lg border border-slate-100">
-        <span className="text-[10px] font-bold text-red-400 line-through">
-          {oldValue}
-        </span>
-        <ArrowRight size={12} className="text-slate-300" />
-        <span className="text-[10px] font-black text-emerald-600">
-          {newValue}
-        </span>
-      </div>
+
+      {/* 3. New Value (The only colored element) */}
+      <span className="ml-2 text-sm font-mono font-black text-emerald-600 bg-emerald-50/50 px-1.5 py-0.5 rounded">
+        {newValue}
+      </span>
     </div>
   );
 }

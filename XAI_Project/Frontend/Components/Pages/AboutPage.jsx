@@ -75,7 +75,7 @@ export default function AboutPage() {
       {/* Get Started Button - Changed: Full width on mobile for easier tapping */}
       <div className="mt-10 flex justify-end">
         <button 
-          onClick={() => navigate('/diabetes')}
+          onClick={() => navigate('/Diabities_System')}
           className="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-indigo-100"
         >
           Get Started <ArrowRight size={18} />

@@ -2,16 +2,17 @@ import { useState } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Navbar from '../Components/NavigationBar.jsx' 
 import AboutPage from '../Components/Pages/AboutPage.jsx';
-import HealthcarePage from '../Components/Pages/HealthcarePage.jsx';
+import DomainPage from '../Components/Pages/SystemsPage.jsx';
+import { Activity,Database,BrainCircuit } from 'lucide-react';
 import './App.css'
 
-// 1. Define your mockData and domainOrder here or import them from another file
+
 const mockData = {
-  diabetes: { icon: () => "🩸", title: "Diabetes Risk Prediction" },
-  hr: { icon: () => "👥", title: "Employee Attrition" },
-  aiText: { icon: () => "📝", title: "AI Text Detection" }
+  "Diabities_System": { title: "Diabetes", icon: Activity },
+  "HR_Report": { title: "HR", icon: Database },
+  "LLM_Report": { title: "LLM", icon: BrainCircuit }, // Must match the navigation string!
 };
-const domainOrder = ['diabetes', 'hr', 'aiText'];
+const domainOrder = ['Diabities_System', 'HR_Report', 'LLM_Report']; 
 
 function App() {
   // 2. Set up the state required by the Navbar
@@ -36,19 +37,11 @@ function App() {
           domainOrder={domainOrder}
           mockData={mockData}
         />
-        
-        {/* 5. Set up the rest of your app's routes here */}
         <main className="flex-1 p-4">
           <Routes>
-            {/* CHANGED: Now redirects the empty path "/" to "/about" */}
             <Route path="/" element={<Navigate to="/about" replace />} />
-            
-            {/* Placeholder route for the About page */}
             <Route path="/about" element={<AboutPage />} />
-
-            <Route path="/diabetes" element={<HealthcarePage />} />
-
-         
+            <Route path="/:domainId" element={<DomainPage />} />
           </Routes>
         </main>
 
