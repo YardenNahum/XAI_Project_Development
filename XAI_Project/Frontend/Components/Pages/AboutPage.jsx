@@ -8,13 +8,24 @@ import {
   RefreshCw 
 } from 'lucide-react';
 
+// 1. Import the study context hook
+import { useStudy } from '../StudyContext.jsx'; 
 import ExplanationCard from '../UI/ExplanationCard';
 
 export default function AboutPage() {
   const navigate = useNavigate();
 
+  // 2. Access the randomized domain order from context
+  const { domainOrder } = useStudy();
+
+  const handleStart = () => {
+    // 3. Navigate to the first domain in the randomized order
+    if (domainOrder && domainOrder.length > 0) {
+      navigate(`/${domainOrder[0]}`);
+    }
+  };
+
   return (
-    /* Changed: Reduced top margin on mobile (mt-4 vs mt-8) and added more bottom clearance (pb-24) */
     <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] p-6 md:p-10 mt-4 md:mt-8 mb-24 lg:mb-12">
       
       {/* Icon header */}
@@ -47,7 +58,6 @@ export default function AboutPage() {
           To help you, you will see three types of explanations:
         </p>
 
-        {/* Explanation Methods Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 py-2">
           <ExplanationCard 
             icon={BarChart3} 
@@ -72,11 +82,10 @@ export default function AboutPage() {
         </div>
       </div>
 
-      {/* Get Started Button - Changed: Full width on mobile for easier tapping */}
       <div className="mt-10 flex justify-end">
         <button 
-          onClick={() => navigate('/Diabities_System')}
-          className="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-indigo-100"
+          onClick={handleStart}
+          className="w-full md:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg shadow-indigo-100 cursor-pointer"
         >
           Get Started <ArrowRight size={18} />
         </button>

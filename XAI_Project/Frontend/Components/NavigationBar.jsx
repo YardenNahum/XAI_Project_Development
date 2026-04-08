@@ -1,116 +1,117 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { BrainCircuit, CheckCircle2, Lock, Info } from 'lucide-react';
+import { useStudy } from './StudyContext.jsx';
+import { Check, FlaskConical, Info } from 'lucide-react';
 
-export default function Navbar({ 
-  completedSurveys, 
-  domainOrder,
-  mockData
-}) {
+const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  
-  let currentPath = location.pathname.replace(/^\/|\/$/g, '');
-  const activeTab = domainOrder.includes(currentPath) ? currentPath : 'about';
+  const { 
+    domainOrder, 
+    completedSurveys, 
+    allSurveysCompleted, 
+    titlesAndIConsMap 
+  } = useStudy();
 
-  const progressPercentage = (completedSurveys.size / domainOrder.length) * 100;
+  const handleFinalSubmit = () => {
+    navigate('/thank-you');
+  };
+
+  const progressPercent = (completedSurveys.size / domainOrder.length) * 100;
 
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-      
-      {/* TOP ROW: Logo and Progress Bar */}
-      <div className="px-4 py-3 sm:px-6 flex items-center justify-center gap-4">
-        {/* Logo */}
-        <div className="flex items-center gap-2 text-indigo-700 shrink-0">
-          <BrainCircuit className="w-7 h-7 sm:w-8 sm:h-8 stroke-[2]" />
-          <h1 className="text-lg font-bold tracking-tight hidden sm:block">XAI Evaluator</h1>
-        </div>
-
-        {/* Center Progress - Visible on Mobile & Desktop */}
-        <div className="flex-1 max-w-md flex items-center justify-center gap-3">
-          <div className="text-[10px] sm:text-xs font-bold text-slate-500 whitespace-nowrap">
-            {completedSurveys.size} / 3
-          </div>
-          <div className="h-2 flex-1 bg-slate-100 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-emerald-500 transition-all duration-500 ease-out shadow-[0_0_8px_rgba(16,185,129,0.4)]"
-              style={{ width: `${progressPercentage}%` }}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* BOTTOM ROW: Navigation Tabs (Horizontal Scroll on Mobile) */}
-      <div className="px-2 pb-2 sm:px-6 sm:pb-4 overflow-x-auto no-scrollbar">
-        <nav className="flex items-center gap-1 sm:gap-3 justify-start md:justify-center min-w-max pb-1">
+    <header className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-50">
+      <div className="max-w-[1600px] mx-auto px-4 py-3 flex flex-col gap-4">
+        
+        {/* ROW 1: BRANDING & PROGRESS */}
+        <div className="flex items-center gap-6">
           
-          {/* --- ABOUT TAB --- */}
+          {/* Branding */}
+          <div 
+            className="flex items-center gap-2 cursor-pointer shrink-0" 
+            onClick={() => navigate('/about')}
+          >
+            <div className="bg-blue-600 p-1.5 rounded-lg shadow-sm">
+              <FlaskConical size={18} className="text-white" />
+            </div>
+            <span className="font-extrabold text-slate-800 text-lg tracking-tight">
+              XAI <span className="text-blue-600">Study</span>
+            </span>
+          </div>
+
+          {/* Progress Section */}
+          <div className="flex-1 flex items-center gap-4">
+            <div className="flex-1 h-3 bg-slate-100 rounded-full overflow-hidden relative border border-slate-200 shadow-inner">
+              <div 
+                className="h-full bg-blue-500 transition-all duration-1000 ease-in-out shadow-[0_0_10px_rgba(59,130,246,0.4)]"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+            <div className="hidden sm:flex bg-slate-50 px-2 py-1 rounded border border-slate-200 text-[10px] font-black text-slate-500 uppercase">
+              {completedSurveys.size} / {domainOrder.length} Complete
+            </div>
+          </div>
+
+          {/* Submit Button */}
+          {allSurveysCompleted && (
+            <button
+              onClick={handleFinalSubmit}
+              className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-lg transition-all active:scale-95 shrink-0 animate-pulse"
+            >
+              Finish Study
+            </button>
+          )}
+        </div>
+
+        {/* ROW 2: ABOUT + DOMAIN NAVIGATION */}
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pt-2 border-t border-slate-50">
+          
+          {/* About Button - Now on Row 2 */}
           <button
             onClick={() => navigate('/about')}
-            className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200 relative
-              ${activeTab === 'about'
-                ? 'bg-indigo-50 text-indigo-800' 
-                : 'text-slate-500 hover:bg-slate-50 hover:text-slate-700'
-              }`}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all border-2
+              ${location.pathname === '/about' 
+                ? 'bg-slate-800 border-slate-800 text-white shadow-md' 
+                : 'border-transparent text-slate-500 hover:bg-slate-100'}
+            `}
           >
-            <div className={`p-1.5 rounded-lg transition-colors ${activeTab === 'about' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 text-slate-500'}`}>
-              <Info size={16} />
-            </div>
-            <div className="font-bold text-xs sm:text-sm">About</div>
-            {activeTab === 'about' && (
-              <div className="absolute -bottom-2 left-0 right-0 h-0.5 bg-indigo-600 rounded-full" />
-            )}
+            <Info size={16} />
+            About
           </button>
 
-          {/* Desktop Connecting Line */}
-          <div className="hidden md:block w-6 h-0.5 bg-slate-100" />
+          <div className="h-6 w-[1px] bg-slate-200 mx-1 shrink-0" />
 
-          {/* DOMAIN TABS */}
-          {domainOrder.map((domainId, index) => {
-            const domain = mockData[domainId];
-            const Icon = domain.icon;
-            const isActive = activeTab === domainId;
-            const isCompleted = completedSurveys.has(domainId);
-            const isUnlocked = index === 0 || completedSurveys.has(domainOrder[index - 1]);
+          {/* Domain Links */}
+          {domainOrder.map((id) => {
+            const item = titlesAndIConsMap[id];
+            const Icon = item.icon;
+            const isCompleted = completedSurveys.has(id);
+            const isActive = location.pathname.includes(id);
 
             return (
-              <React.Fragment key={domainId}>
-                <button
-                  onClick={() => { if (isUnlocked) navigate(`/${domainId}`); }}
-                  disabled={!isUnlocked}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-200 relative
-                    ${isActive 
-                      ? 'bg-indigo-50 text-indigo-800' 
-                      : isUnlocked
-                        ? 'text-slate-600 hover:bg-slate-50'
-                        : 'text-slate-300 cursor-not-allowed opacity-60'
-                    }`}
-                >
-                  <div className={`p-1.5 rounded-lg transition-colors 
-                    ${isActive ? 'bg-indigo-600 text-white shadow-sm' : 
-                      isCompleted ? 'bg-emerald-100 text-emerald-700' :
-                      !isUnlocked ? 'bg-slate-200 text-slate-400' :
-                      'bg-slate-100 text-slate-500'}`}>
-                    {isCompleted ? <CheckCircle2 size={16} /> : !isUnlocked ? <Lock size={16} /> : <Icon size={16} />}
+              <button
+                key={id}
+                onClick={() => navigate(`/${id}`)}
+                className={`relative flex items-center gap-2 px-4 py-2 rounded-xl transition-all whitespace-nowrap border-2
+                  ${isActive 
+                    ? 'bg-blue-50 border-blue-200 text-blue-700 font-bold shadow-sm' 
+                    : 'border-transparent text-slate-500 hover:bg-slate-50'}
+                `}
+              >
+                <Icon size={16} className={isCompleted ? 'text-green-500' : ''} />
+                <span className="text-xs font-bold uppercase tracking-wide">{item.title}</span>
+                {isCompleted && (
+                  <div className="absolute -top-1 -right-1 bg-green-500 rounded-full p-0.5 border-2 border-white shadow-sm">
+                    <Check size={8} className="text-white" />
                   </div>
-                  <div className="font-bold text-xs sm:text-sm whitespace-nowrap">
-                    {domain.title.split(': ')[0]}
-                  </div>
-                  
-                  {isActive && (
-                    <div className="absolute -bottom-2 left-0 right-0 h-0.5 bg-indigo-600 rounded-full" />
-                  )}
-                </button>
-                
-                {/* Desktop Connecting Line */}
-                {index < domainOrder.length - 1 && (
-                  <div className="hidden md:block w-6 h-0.5 bg-slate-100" />
                 )}
-              </React.Fragment>
-            )
+              </button>
+            );
           })}
-        </nav>
+        </div>
       </div>
     </header>
   );
-}
+};
+
+export default Navbar;

@@ -7,7 +7,6 @@ export default function DiceCard({ data }) {
   const [isExpanded, setIsExpanded] = useState(false);
   
   if (!data) return null;
-
   // 1. Transform Data
   const scenarioEntries = Object.entries(data).map(([key, value]) => ({
     id: key,
@@ -82,7 +81,7 @@ export default function DiceCard({ data }) {
       {(hasMoreScenarios || scenarioEntries.some(s => s.changes.length > FEATURE_LIMIT)) && (
         <button 
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full mt-6 py-4 text-xs font-black text-indigo-700 bg-indigo-50/50 border border-indigo-100 rounded-2xl hover:bg-indigo-100 transition-all active:scale-[0.98] shadow-sm"
+          className="w-full mt-6 py-4 text-xs font-black text-indigo-700 bg-indigo-50/50 border border-indigo-100 rounded-2xl hover:bg-indigo-100 transition-all active:scale-[0.98] shadow-sm cursor-pointer"
         >
           {isExpanded ? (
             'Show Less'

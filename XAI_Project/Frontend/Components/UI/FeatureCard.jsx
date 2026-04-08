@@ -1,17 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-/**
- * A small card to display individual data features used in the AI prediction.
- */
 export default function FeatureCard({ label, value }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  // Set your character limit here
+  const CHAR_LIMIT = 400;
+  const isLongText = value?.length > CHAR_LIMIT;
+
+  const displayValue = isExpanded || !isLongText 
+    ? value 
+    : value.substring(0, CHAR_LIMIT) + "...";
+
   return (
-    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 transition-all hover:border-indigo-100 hover:bg-white hover:shadow-sm group">
-      <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1 group-hover:text-indigo-400 transition-colors">
+    <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 transition-all hover:border-indigo-100 hover:bg-white hover:shadow-md group h-full flex flex-col">
+      <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-2 group-hover:text-indigo-500 transition-colors">
         {label}
       </div>
-      <div className="text-sm font-bold text-slate-800">
-        {value}
+      
+      <div className="text-sm font-medium text-slate-700 break-words leading-relaxed">
+        {displayValue}
       </div>
+
+      {isLongText && (
+        <button 
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="mt-3 cursor-pointer text-[10px] font-black text-indigo-600 uppercase tracking-tighter hover:text-indigo-800 transition-colors w-fit"
+        >
+          {isExpanded ? 'Show Less' : 'Read Full Text'}
+        </button>
+      )}
     </div>
   );
 }
