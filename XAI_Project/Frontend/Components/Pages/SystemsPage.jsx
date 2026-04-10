@@ -124,7 +124,7 @@ export default function DomainPage() {
         <div className="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm">
           <div className="flex items-center gap-2 text-slate-400 font-bold text-[10px] uppercase tracking-widest mb-6">
             <Database size={14} />
-            <span>Profile Data Evaluated</span>
+            <span>Prediction Data Evaluted By AI</span>
           </div>
           <div className="flex flex-wrap gap-4">
             {(isShowingAllFeatures ? processedReport.inputFeatures : processedReport.inputFeatures.slice(0, 4)).map((item, i) => (

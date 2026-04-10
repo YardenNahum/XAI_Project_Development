@@ -39,7 +39,7 @@ export default function AboutPage() {
       <div className="space-y-6 text-slate-600 leading-relaxed text-[15px]">
         <p>
           Artificial Intelligence (AI) is everywhere today, helping us make decisions in healthcare, hiring, and more. 
-          But sometimes, AI acts like a "black box"—it gives an answer, but doesn't tell us <em>why</em>.
+          But sometimes, AI acts like a "black box" it gives an answer, but doesn't tell us <em>why</em>.
         </p>
 
         <p>
