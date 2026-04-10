@@ -1,13 +1,19 @@
 import React from 'react';
 
 /**
- * A single bar representing a specific feature's influence.
+ * ShapBar
+ * Component to display a single feature's SHAP value as a horizontal bar, showing the feature name, its impact on the prediction, and a visual representation of the impact relative to other features.
+ * Props:
+ * - label: The name of the feature 
+ * - impact: The SHAP value for the feature.
+ * - maxValue: The maximum absolute SHAP value among all features.
+ * - colorClass: The CSS class for the bar's color.
  */
 export default function ShapBar({ label, impact, maxValue, colorClass }) {
   // Calculate visual width relative to the most impactful feature
   const visualWidthPercentage = maxValue > 0 ? (Math.abs(impact) / maxValue) * 100 : 0;
   
-  // Format the impact string (e.g., +0.13 or -0.05)
+  // Format the impact string
   const formattedImpact = impact > 0 ? `+${impact.toFixed(4)}` : impact.toFixed(4);
   
   // Dynamic text color based on positive/negative influence

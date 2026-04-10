@@ -5,7 +5,9 @@ import { useNavigate } from 'react-router-dom';
 const FinalPage = () => {
   const navigate = useNavigate();
   clearLocalStorage(); // Clear all stored data at the end of the study
-
+  /**
+   * Clears all relevant data from localStorage to reset the study.
+   */
   function clearLocalStorage() {
     localStorage.removeItem('completedSurveys');
     localStorage.removeItem('domainOrder');
@@ -26,7 +28,7 @@ const FinalPage = () => {
           Thank You!
         </h1>
         <p className="text-slate-600 text-lg mb-8 leading-relaxed">
-          Your participation is invaluable. The data collected will help us greatly in our research on <strong>Explainable AI</strong>.
+          The data collected will help us greatly in our research on <strong>Explainable AI</strong>.
         </p>
 
         {/* Action Buttons */}
@@ -41,7 +43,7 @@ const FinalPage = () => {
         </div>
 
         <p className="mt-8 text-sm text-slate-400">
-          You can now safely close this window.
+          You can now close this window.
         </p>
       </div>
     </div>

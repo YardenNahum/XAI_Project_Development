@@ -9,10 +9,9 @@ import ShapBar from './ShapBar.jsx';
 export default function ShapCard({ data }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Guard clause for missing data
   if (!data || !data.feature_impacts) return null;
 
-  // 1. Internal Processing: Map and Sort by absolute impact (strength)
+  // Map and Sort by impact
   const processedImpacts = data.feature_impacts
     .map(item => ({
       label: item.feature,
@@ -21,10 +20,10 @@ export default function ShapCard({ data }) {
     }))
     .sort((a, b) => Math.abs(b.impact) - Math.abs(a.impact));
 
-  // 2. Scaling: Max absolute value for bar width calculation
+  // Max absolute value for bar width calculation
   const maxImpactValue = Math.max(...processedImpacts.map(item => Math.abs(item.impact)));
 
-  // 3. Pagination: Determine which features to show
+  // Determine which features to show if not expnaded view
   const displayedImpacts = isExpanded ? processedImpacts : processedImpacts.slice(0, 4);
 
   return (

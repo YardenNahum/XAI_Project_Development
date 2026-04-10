@@ -8,15 +8,18 @@ export default function LimeCard({ data }) {
 
   if (!data || !data.Type) return null;
 
-  // --- 1. SHARED PREDICTION LOGIC ---
-  // We extract this here so both Textual and Tabular benefit from the same header style
+  /**
+   * 1. PREDICTION SORTING LOGIC - Sort predictions by confidence for display in the header
+   *    - Convert the predictions object into an array of {label, value} objects
+   *    - Sort the array in descending order based on the confidence value
+   */
   const sortedPredictions = data.Prediction 
     ? Object.entries(data.Prediction)
         .map(([label, value]) => ({ label, value }))
         .sort((a, b) => b.value - a.value)
     : [];
 
-  // --- 2. TABULAR TRUNCATION LOGIC ---
+  // limit view for tabular features to 5 by default, with option to expand and show all
   const INITIAL_LIMIT = 5; 
   const featureList = data.features || [];
   // Only show the "View All" button if it's Tabular and has more than 5 features
@@ -29,7 +32,7 @@ export default function LimeCard({ data }) {
   return (
     <div className="bg-white rounded-3xl border border-slate-100 p-6 md:p-8 shadow-sm transition-all duration-300">
       
-      {/* HEADER SECTION */}
+      {/* header */}
       <div className="flex items-center gap-3 mb-8">
         <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl">
           <Target size={20} className="stroke-[2.5]" />
@@ -44,7 +47,7 @@ export default function LimeCard({ data }) {
         </div>
       </div>
 
-      {/* SHARED PREDICTION HEADER (The % boxes) */}
+      {/*the model prediction*/}
       {sortedPredictions.length > 0 && (
         <div className="mb-8 space-y-4">
           <div className="flex items-center gap-2">
@@ -73,7 +76,7 @@ export default function LimeCard({ data }) {
         </div>
       )}
 
-      {/* CONTENT ROUTER */}
+      {/* show either the tabular or the lime */}
       <div className="space-y-6">
         {(() => {
           switch (data.Type) {
@@ -96,7 +99,7 @@ export default function LimeCard({ data }) {
         })()}
       </div>
 
-      {/* SHOW MORE/LESS BUTTON (Tabular Only) */}
+      {/* expand if its the tabular lime */}
       {shouldShowTabularExpand && (
         <button
           onClick={() => setIsExpanded(!isExpanded)}

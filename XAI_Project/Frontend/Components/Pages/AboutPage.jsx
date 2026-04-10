@@ -8,18 +8,17 @@ import {
   RefreshCw 
 } from 'lucide-react';
 
-// 1. Import the study context hook
 import { useStudy } from '../StudyContext.jsx'; 
 import ExplanationCard from '../UI/ExplanationCard';
 
 export default function AboutPage() {
   const navigate = useNavigate();
 
-  // 2. Access the randomized domain order from context
+  // Access the domain order from context
   const { domainOrder } = useStudy();
 
   const handleStart = () => {
-    // 3. Navigate to the first domain in the randomized order
+    // Navigate to the first domain in the randomized order
     if (domainOrder && domainOrder.length > 0) {
       navigate(`/${domainOrder[0]}`);
     }

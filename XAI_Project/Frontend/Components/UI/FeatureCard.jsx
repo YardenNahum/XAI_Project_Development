@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 export default function FeatureCard({ label, value }) {
   const [isExpanded, setIsExpanded] = useState(false);
   
-  // Set your character limit here
+  // limit the text size to prevent overflow in the card, with option to expand and show full text
   const CHAR_LIMIT = 400;
   const isLongText = value?.length > CHAR_LIMIT;
-
+// Slice the value if not expanded
   const displayValue = isExpanded || !isLongText 
     ? value 
     : value.substring(0, CHAR_LIMIT) + "...";

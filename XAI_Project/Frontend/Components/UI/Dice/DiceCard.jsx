@@ -4,10 +4,11 @@ import DiceScenario from './DiceScenario.jsx';
 import DiceFeatureChange from './DiceFeatureChange.jsx';
 
 export default function DiceCard({ data }) {
+  // State to control whether we are showing the limited view or the expanded view of scenarios and features
   const [isExpanded, setIsExpanded] = useState(false);
   
   if (!data) return null;
-  // 1. Transform Data
+  // Get the data for the scenarios and their feature changes
   const scenarioEntries = Object.entries(data).map(([key, value]) => ({
     id: key,
     displayName: key.replace('_', ' ').toUpperCase(),
@@ -18,11 +19,10 @@ export default function DiceCard({ data }) {
     })) : []
   }));
 
-  // 2. LIMIT LOGIC
+  // show only 4 scenarios and 3 features per scenario by default, with option to expand and show all
   const SCENARIO_LIMIT = 4; // Show max 4 scenarios
   const FEATURE_LIMIT = 3;  // Show max 3 features per scenario before expanding
 
-  // Determine which scenarios to show
   const visibleScenarios = isExpanded 
     ? scenarioEntries 
     : scenarioEntries.slice(0, SCENARIO_LIMIT);
@@ -65,7 +65,7 @@ export default function DiceCard({ data }) {
                   />
                 ))}
                 
-                {/* Visual indicator if features are hidden inside a scenario */}
+                {/* IF not expanded show limited features */}
                 {!isExpanded && scenario.changes.length > FEATURE_LIMIT && (
                   <div className="px-8 py-2 text-[10px] font-bold text-slate-400 italic">
                     + {scenario.changes.length - FEATURE_LIMIT} more changes in this scenario...
@@ -77,7 +77,7 @@ export default function DiceCard({ data }) {
         })}
       </div>
 
-      {/* Global View More Button */}
+      {/* View More Button */}
       {(hasMoreScenarios || scenarioEntries.some(s => s.changes.length > FEATURE_LIMIT)) && (
         <button 
           onClick={() => setIsExpanded(!isExpanded)}
