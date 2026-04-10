@@ -1,13 +1,29 @@
 {
-  "experimentalServices": {
-    "frontend": {
-      "entrypoint": "Frontend",
-      "routePrefix": "/",
-      "framework": "vite"
+  "version": 2,
+  "builds": [
+    {
+      "src": "Frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
     },
-    "backend": {
-      "entrypoint": "Backend",
-      "routePrefix": "/_/Backend"
+    {
+      "src": "Backend/index.js",
+      "use": "@vercel/node"
     }
+  ],
+  "routes": [
+    {
+      "src": "Backend/index.js",
+      "dest": "/Backend/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/Frontend/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
   }
 }
