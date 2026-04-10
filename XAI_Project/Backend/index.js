@@ -27,7 +27,7 @@ if (!admin.apps.length) {
 
 // cors for app deployment
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000', 'https://xai-project.vercel.app'],
+  origin: ['http://localhost:5173', 'http://localhost:3000', 'https://xai-study.vercel.app'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
