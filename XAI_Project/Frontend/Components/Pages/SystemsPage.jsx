@@ -10,6 +10,7 @@ import DiceCard from '../UI/Dice/DiceCard.jsx';
 import SurveyFrame from '../UI/SurveyFrame.jsx'; 
 import { fetchReport } from '../../Services/Reports_Service.jsx'; 
 
+// Map of domain IDs to their corresponding survey URLs
 const SURVEY_MAP = {
   'Diabities_System': 'https://qualtricsxmbfqlkh8c3.qualtrics.com/jfe/form/SV_4UiCFgzpWp5HvGm',
   'HR_Report': 'https://qualtricsxmbfqlkh8c3.qualtrics.com/jfe/form/SV_cUw1SGokPthpwb4',
@@ -17,18 +18,23 @@ const SURVEY_MAP = {
 };
 
 export default function DomainPage() {
+  // Get the domain ID from the URL parameters.
   const { domainId } = useParams();
   const navigate = useNavigate();
+  // Access study context for domain order and survey completion tracking
   const { domainOrder, markAsComplete, completedSurveys } = useStudy();
-  
+  // state for report data
   const [processedReport, setProcessedReport] = useState(null);
+  // state for loading and UI controls
   const [isLoading, setIsLoading] = useState(true);
+  // state to control showing all features 
   const [isShowingAllFeatures, setIsShowingAllFeatures] = useState(false);
+  // state to control the timed lock on the navigation button
   const [isUnlocked, setIsUnlocked] = useState(false);
 
   const currentSurveyUrl = SURVEY_MAP[domainId] || SURVEY_MAP['Diabities_System'];
 
-  // 20-second Background Lock
+  // 20-second move on Lock
   useEffect(() => {
     setIsUnlocked(false);
     const lockTimer = setTimeout(() => setIsUnlocked(true), 20000);
@@ -38,6 +44,7 @@ export default function DomainPage() {
   // Data Fetching
   useEffect(() => {
     let isMounted = true;
+    // Fetch the report data for the current domain and process it for UI display
     const loadDomainData = async () => {
       setIsLoading(true);
       const predictionId = (domainId === 'LLM_Report') ? '50' : '2';
@@ -57,20 +64,22 @@ export default function DomainPage() {
           lime: firebaseRawData.explanations.lime, 
           dice: firebaseRawData.explanations.dice
         };
+        // Only update state if the component is still mounted 
         if (isMounted) setProcessedReport(finalUiData);
       } catch (err) { console.error(err); } 
       finally { if (isMounted) setIsLoading(false); }
     };
+    // Load the domain data when the component mounts or when the domainId changes
     loadDomainData();
     return () => { isMounted = false; };
   }, [domainId]);
-
+  // Handler for when the user clicks the navigation button to proceed to the next step
   const handleNextStep = () => {
     markAsComplete(domainId);
     const updatedCompleted = new Set(completedSurveys);
     updatedCompleted.add(domainId);
     const nextUnfinished = domainOrder.find(id => !updatedCompleted.has(id));
-
+    // Navigate to the next unfinished domain or to the final page if all are completed
     if (nextUnfinished) {
       navigate(`/${nextUnfinished}`);
       window.scrollTo(0, 0);
@@ -78,9 +87,9 @@ export default function DomainPage() {
       navigate('/thank-you');
     }
   };
-
+// Show loading spinner while fetching data
   if (isLoading) return <div className="h-screen flex items-center justify-center bg-slate-50"><Loader2 className="animate-spin text-indigo-500 w-10 h-10" /></div>;
-
+//checking if its the last survey to adjust the button text and style 
   const isLastTaskOverall = (completedSurveys.size + (completedSurveys.has(domainId) ? 0 : 1)) === domainOrder.length;
   
   // Compact Navigation Button

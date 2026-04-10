@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 export default function TextualLimeView({ text, features, predictions }) {
   const [isExpanded, setIsExpanded] = useState(false);
   
-  // Configuration for truncation
+  // limiting the text size
   const WORD_LIMIT = 45; 
   const words = text.split(' ');
   const isLongText = words.length > WORD_LIMIT;
@@ -23,7 +23,7 @@ export default function TextualLimeView({ text, features, predictions }) {
   return (
     <div className="space-y-6">
       
-      {/* 1. PREDICTION HEADER (Matches Tabular Style) */}
+      {/* PREDICTION HEADER*/}
       {sortedPredictions.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center gap-2 mb-2">
@@ -56,7 +56,7 @@ export default function TextualLimeView({ text, features, predictions }) {
         </div>
       )}
 
-      {/* 2. HIGHLIGHTED TEXT BLOCK */}
+      {/* HIGHLIGHTED TEXT BLOCK */}
       <div className="space-y-2">
         <div className="flex items-center gap-2 px-1 mb-2">
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">

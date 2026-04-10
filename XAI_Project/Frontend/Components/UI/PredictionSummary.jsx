@@ -6,7 +6,7 @@ import React from 'react';
  * - title: String - The title of the prediction
  * - description: String - A brief description of the prediction context
  * - predictionValue: String - The predicted outcome
- * - icon: React Component (optional) - An icon to visually represent the domain
+ * - icon: An icon to visually represent the domain
  */
 export default function PredictionSummary({ 
   title, 

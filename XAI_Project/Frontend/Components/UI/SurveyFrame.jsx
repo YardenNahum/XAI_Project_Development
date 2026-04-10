@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Beaker, Minus, Maximize2, X, Loader2, ChevronUp } from 'lucide-react';
-
+/**
+ * SurveyFrame
+ * survey form within an iframe, with a header and loading state.
+ * Props:
+ * - url: The URL of the survey to display in the iframe.
+ * - domainId: The ID of the current domain, used for tracking and display purposes.
+ * - isMobile: Boolean indicating if the user is on a mobile device.
+ * - navButton: The navigation button component to be displayed in the header.
+ */
 export default function SurveyFrame({ url, domainId, isMobile = false, navButton }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [surveyMode, setSurveyMode] = useState('default');
-
+// Reset loading state when URL changes
   useEffect(() => {
     setIsLoaded(false);
   }, [url]);
 
+  //responsive container styles based on device and survey mode
   const getContainerStyles = () => {
     if (isMobile) {
       return `fixed bottom-0 left-0 right-0 z-[110] bg-slate-900 flex flex-col transition-all duration-500 ease-in-out shadow-[0_-10px_40px_rgba(0,0,0,0.4)] ${
