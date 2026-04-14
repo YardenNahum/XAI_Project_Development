@@ -1,28 +1,36 @@
 import React from 'react';
-import { Target, CheckCircle2 } from 'lucide-react';
+import { Target } from 'lucide-react';
 
-/**
- * DiceScenario 
- * Component to display a single DiCE scenario, showing the target outcome and an icon.
- */
-export default function DiceScenario({ outcome }) {
-  console.log("Rendering DiceScenario with outcome:", outcome);
+export default function DiceScenario({ outcome, currentProb, targetProb, gain }) {
   return (
-    <div className="flex items-center gap-3 w-full bg-indigo-50/50 border border-indigo-100/50 px-4 py-3 rounded-xl">
-      {/* Icon */}
-      <div className="p-2 bg-white rounded-lg shadow-sm border border-indigo-100 shrink-0">
-        <Target size={16} className="text-indigo-600" />
-      </div>
+    <div className="flex items-center gap-4 w-full bg-slate-50 border border-slate-100 px-4 py-3 rounded-xl">
+      {/* Icon  */}
+      <Target size={20} className="text-slate-900 shrink-0" />
       
-      {/* Outcome Text */}
-      <div className="flex flex-col">
-        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1.5">
-          Target Result
+      <div className="flex items-center gap-6">
+        {/* Outcome */}
+        <span className="text-base font-black text-slate-900 uppercase tracking-tight">
+          {outcome}
         </span>
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-black text-indigo-900">
-            {outcome}
-          </span>
+
+        <div className="flex items-center gap-5 text-sm whitespace-nowrap">
+          {/* Current */}
+          <div className="flex gap-2">
+            <span className="text-slate-500 font-semibold">Current:</span>
+            <span className="text-slate-500 font-medium">{currentProb}</span>
+          </div>
+
+          {/* New */}
+          <div className="flex gap-2 text-base">
+            <span className="text-slate-600 font-bold">New:</span>
+            <span className="font-black text-black">{targetProb}</span>
+          </div>
+
+          {/* Gain */}
+          <div className="flex gap-2 text-base">
+            <span className="text-slate-600 font-bold">Gain:</span>
+            <span className="font-black text-emerald-600">{gain}</span>
+          </div>
         </div>
       </div>
     </div>

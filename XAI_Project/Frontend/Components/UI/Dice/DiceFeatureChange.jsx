@@ -1,19 +1,31 @@
 import React from 'react';
 
-/**
- * DiceFeatureChange 
- * Component to display a single feature change in a DiCE scenario, showing the feature name and its new value after the change.
- */
-export default function DiceFeatureChange({ label, newValue }) {
+export default function DiceFeatureChange({ label, oldValue, newValue }) {
   return (
-    <div className="flex items-center py-2 px-2 group">
-      <div className="w-1 h-1 rounded-full bg-slate-300 mr-3 shrink-0" />
-      <span className="text-sm font-bold text-slate-600 capitalize">
-        {label.replace(/_/g, ' ')}:
+    <div className="flex flex-col py-3 px-2 group border-b border-slate-50 last:border-0">
+      {/* Label*/}
+      <span className="text-xs font-black text-slate-700 uppercase tracking-wider mb-2">
+        {label.replace(/_/g, ' ')}
       </span>
-      <span className="ml-2 text-sm font-mono font-black text-emerald-600 bg-emerald-50/50 px-1.5 py-0.5 rounded">
-        {newValue}
-      </span>
+      
+      <div className="flex items-center gap-3">
+        {/* Old Value - Red & Strikethrough */}
+        <div className="flex items-center gap-1.5 px-2 py-1 bg-rose-50 rounded-lg border border-rose-100">
+          <span className="text-xs font-bold text-rose-500 line-through">
+            {oldValue}
+          </span>
+        </div>
+
+        {/* Arrow Spacer */}
+        <span className="text-slate-300 font-bold text-lg">→</span>
+
+        {/* New Value & Suggestion - Green */}
+        <div className="flex items-center gap-2 px-2 py-1 bg-emerald-50 rounded-lg border border-emerald-100">
+          <span className="text-xs font-black text-emerald-700">
+            {newValue}
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
