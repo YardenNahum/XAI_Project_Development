@@ -9,12 +9,18 @@ import LimeCard from '../UI/Lime/LimeCard.jsx';
 import DiceCard from '../UI/Dice/DiceCard.jsx';
 import SurveyFrame from '../UI/SurveyFrame.jsx'; 
 import { fetchReport } from '../../Services/Reports_Service.jsx'; 
-
+import StudySteps from '../UI/StudySteps.jsx';
 // Map of domain IDs to their corresponding survey URLs
 const SURVEY_MAP = {
   'Diabities_System': 'https://qualtricsxmbfqlkh8c3.qualtrics.com/jfe/form/SV_4UiCFgzpWp5HvGm',
   'HR_Report': 'https://qualtricsxmbfqlkh8c3.qualtrics.com/jfe/form/SV_cUw1SGokPthpwb4',
   'LLM_Report': 'https://qualtricsxmbfqlkh8c3.qualtrics.com/jfe/form/SV_6LoneqSZ6Vm0gFE'
+};
+
+const predictionMap = {
+  'Diabities_System': 1,
+  'HR_Report': 4,
+  'LLM_Report': 1000
 };
 
 export default function DomainPage() {
@@ -47,7 +53,7 @@ export default function DomainPage() {
     // Fetch the report data for the current domain and process it for UI display
     const loadDomainData = async () => {
       setIsLoading(true);
-      const predictionId = (domainId === 'LLM_Report') ? '50' : '2';
+      const predictionId = predictionMap[domainId] || 0;
       try {
         const firebaseRawData = await fetchReport(domainId, predictionId);
         const finalUiData = {
@@ -118,13 +124,14 @@ export default function DomainPage() {
   return (
     <div className="flex flex-col lg:flex-row lg:gap-8 p-4 lg:p-10 bg-slate-50 min-h-screen">
       <div className="flex-1 space-y-6 min-w-0 pb-10">
+              <StudySteps />
         <PredictionSummary title={processedReport.displayTitle} description={processedReport.displayDescription} predictionValue={processedReport.predictionText} icon={Activity} />
         
         {/* Profile Data Evaluated */}
         <div className="bg-white rounded-3xl border border-slate-100 p-6 shadow-sm">
           <div className="flex items-center gap-2 text-slate-400 font-bold text-[10px] uppercase tracking-widest mb-6">
             <Database size={14} />
-            <span>Prediction Data Evaluted By AI</span>
+            <span>Prediction Data Evaluated By AI</span>
           </div>
           <div className="flex flex-wrap gap-4">
             {(isShowingAllFeatures ? processedReport.inputFeatures : processedReport.inputFeatures.slice(0, 4)).map((item, i) => (

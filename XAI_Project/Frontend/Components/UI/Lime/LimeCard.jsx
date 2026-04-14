@@ -62,12 +62,12 @@ export default function LimeCard({ data }) {
               <div 
                 key={pred.label} 
                 className={`p-4 rounded-2xl border flex justify-between items-center bg-white shadow-sm transition-all
-                  ${idx === 0 ? 'border-orange-200 ring-1 ring-orange-100' : 'border-blue-100 opacity-80'}`}
+                  ${idx === 1 ? 'border-orange-200 ring-1 ring-orange-100' : 'border-blue-100 opacity-80'}`}
               >
-                <span className={`text-xs font-black uppercase tracking-tight ${idx === 0 ? 'text-orange-500' : 'text-blue-500'}`}>
+                <span className={`text-xs font-black uppercase tracking-tight ${idx === 1 ? 'text-orange-500' : 'text-blue-500'}`}>
                   {pred.label}
                 </span>
-                <span className={`text-2xl font-mono font-black ${idx === 0 ? 'text-orange-600' : 'text-blue-600'}`}>
+                <span className={`text-2xl font-mono font-black ${idx === 1 ? 'text-orange-600' : 'text-blue-600'}`}>
                   {(pred.value * 100).toFixed(1)}%
                 </span>
               </div>
