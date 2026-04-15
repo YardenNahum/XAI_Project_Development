@@ -26,7 +26,8 @@ export default function DiceCard({ data }) {
     }));
 
   const SCENARIO_LIMIT = 4;
-  const FEATURE_LIMIT = 3;
+  // Increased feature limit for the "image" view
+  const FEATURE_LIMIT = 8; 
 
   const visibleScenarios = isExpanded 
     ? scenarioEntries 
@@ -42,22 +43,22 @@ export default function DiceCard({ data }) {
         <span>DiCE Explanations</span>
       </div>
 
-      <h3 className="text-base text-xl font-extrabold text-slate-900 tracking-tight mb-1">
-        Counterfactual Explainations (DiCE)
+      <h3 className="text-xl font-extrabold text-slate-900 tracking-tight mb-1">
+        Counterfactual Explanations (DiCE)
       </h3>
-      <p className="text-l text-slate-500 mb-4 font-medium italic">
-        Changes to the features to reach {scenarioEntries[0]?.outcome} result.
+      <p className="text-sm text-slate-500 mb-4 font-medium italic">
+        Feature adjustments to reach {scenarioEntries[0]?.outcome} result.
       </p>
 
       {/* Scenarios List */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         {visibleScenarios.map((scenario) => {
           const displayChanges = isExpanded 
             ? scenario.changes 
             : scenario.changes.slice(0, FEATURE_LIMIT);
             
           return (
-            <div key={scenario.id} className="p-3 bg-slate-50/50 rounded-xl border border-slate-100 transition-all">
+            <div key={scenario.id} className="p-4 bg-slate-50/50 rounded-xl border border-slate-100 transition-all">
               <DiceScenario 
                 outcome={scenario.outcome} 
                 currentProb={currentProb}
@@ -65,7 +66,8 @@ export default function DiceCard({ data }) {
                 gain={scenario.gain} 
               />
               
-              <div className="mt-2 flex flex-col gap-1">
+              {/* CHANGE: Added grid-cols-2 to show features side-by-side */}
+              <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2">
                 {displayChanges.map((change, idx) => (
                   <DiceFeatureChange 
                     key={idx} 
@@ -74,13 +76,13 @@ export default function DiceCard({ data }) {
                     newValue={change.newValue} 
                   />
                 ))}
-                
-                {!isExpanded && scenario.changes.length > FEATURE_LIMIT && (
-                  <div className="px-2 py-1 text-[9px] font-bold text-slate-400 italic">
-                    + {scenario.changes.length - FEATURE_LIMIT} more...
-                  </div>
-                )}
               </div>
+
+              {!isExpanded && scenario.changes.length > FEATURE_LIMIT && (
+                <div className="mt-2 px-2 py-1 text-[9px] font-bold text-slate-400 italic">
+                  + {scenario.changes.length - FEATURE_LIMIT} more features...
+                </div>
+              )}
             </div>
           );
         })}
