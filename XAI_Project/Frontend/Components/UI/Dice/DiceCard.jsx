@@ -25,8 +25,7 @@ export default function DiceCard({ data }) {
       })) : []
     }));
 
-  const SCENARIO_LIMIT = 4;
-  // Increased feature limit for the "image" view
+  const SCENARIO_LIMIT = 3; // Reduced to keep screenshot height manageable
   const FEATURE_LIMIT = 8; 
 
   const visibleScenarios = isExpanded 
@@ -36,29 +35,29 @@ export default function DiceCard({ data }) {
   const hasMoreScenarios = scenarioEntries.length > SCENARIO_LIMIT;
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-100 p-5 shadow-sm">
+    <div className="bg-white rounded-[2rem] border-2 border-slate-200 p-8 shadow-md">
       {/* Header */}
-      <div className="flex items-center gap-2 mb-4 pb-4 border-b border-slate-50 text-slate-400 font-bold text-[10px] uppercase tracking-wider">
-        <Shuffle size={12} />
+      <div className="flex items-center gap-3 mb-6 pb-6 border-b border-slate-100 text-slate-400 font-black text-xs uppercase tracking-[0.2em]">
+        <Shuffle size={18} strokeWidth={3} />
         <span>DiCE Explanations</span>
       </div>
 
-      <h3 className="text-xl font-extrabold text-slate-900 tracking-tight mb-1">
-        Counterfactual Explanations (DiCE)
+      <h3 className="text-3xl font-black text-slate-900 tracking-tight mb-2">
+        Counterfactual Scenarios
       </h3>
-      <p className="text-sm text-slate-500 mb-4 font-medium italic">
-        Feature adjustments to reach {scenarioEntries[0]?.outcome} result.
+      <p className="text-4xl text-slate-500 mb-8 font-medium italic leading-relaxed">
+        Adjusting these specific factors would lead to a <span className="text-slate-900 font-bold">"{scenarioEntries[0]?.outcome}"</span> outcome.
       </p>
 
       {/* Scenarios List */}
-      <div className="space-y-4">
+      <div className="space-y-10">
         {visibleScenarios.map((scenario) => {
           const displayChanges = isExpanded 
             ? scenario.changes 
             : scenario.changes.slice(0, FEATURE_LIMIT);
             
           return (
-            <div key={scenario.id} className="p-4 bg-slate-50/50 rounded-xl border border-slate-100 transition-all">
+            <div key={scenario.id} className="space-y-6">
               <DiceScenario 
                 outcome={scenario.outcome} 
                 currentProb={currentProb}
@@ -66,8 +65,7 @@ export default function DiceCard({ data }) {
                 gain={scenario.gain} 
               />
               
-              {/* CHANGE: Added grid-cols-2 to show features side-by-side */}
-              <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3 px-2">
                 {displayChanges.map((change, idx) => (
                   <DiceFeatureChange 
                     key={idx} 
@@ -79,8 +77,8 @@ export default function DiceCard({ data }) {
               </div>
 
               {!isExpanded && scenario.changes.length > FEATURE_LIMIT && (
-                <div className="mt-2 px-2 py-1 text-[9px] font-bold text-slate-400 italic">
-                  + {scenario.changes.length - FEATURE_LIMIT} more features...
+                <div className="px-2 text-sm font-black text-slate-400 uppercase tracking-widest italic">
+                  + {scenario.changes.length - FEATURE_LIMIT} additional parameters changed
                 </div>
               )}
             </div>
@@ -92,9 +90,9 @@ export default function DiceCard({ data }) {
       {(hasMoreScenarios || scenarioEntries.some(s => s.changes.length > FEATURE_LIMIT)) && (
         <button 
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full mt-4 py-2 text-[10px] font-black text-indigo-700 bg-indigo-50/30 border border-indigo-50 rounded-xl hover:bg-indigo-100 transition-all shadow-sm"
+          className="w-full mt-10 py-5 text-sm font-black text-indigo-700 bg-indigo-50 border-2 border-indigo-100 rounded-2xl hover:bg-indigo-100 transition-all uppercase tracking-widest"
         >
-          {isExpanded ? 'Show Less' : 'View All Scenarios'}
+          {isExpanded ? 'Minimize Scenarios' : `View All ${scenarioEntries.length} Counterfactuals`}
         </button>
       )}
     </div>

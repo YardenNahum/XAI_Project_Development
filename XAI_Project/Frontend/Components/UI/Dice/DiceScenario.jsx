@@ -3,34 +3,34 @@ import { Target } from 'lucide-react';
 
 export default function DiceScenario({ outcome, currentProb, targetProb, gain }) {
   return (
-    <div className="flex items-center gap-4 w-full bg-slate-50 border border-slate-100 px-4 py-3 rounded-xl">
-      {/* Icon  */}
-      <Target size={20} className="text-slate-900 shrink-0" />
-      
-      <div className="flex items-center gap-6">
-        {/* Outcome */}
-        <span className="text-base font-black text-slate-900 uppercase tracking-tight">
-          {outcome}
+    <div className="flex items-center justify-between w-full border-b-2 border-slate-100 pb-4">
+      <div className="flex items-center gap-4">
+        <Target size={24} className="text-slate-900 shrink-0" strokeWidth={3} />
+        <span className="text-3xl font-black text-slate-900 uppercase tracking-tight">
+          Target: {outcome}
         </span>
+      </div>
 
-        <div className="flex items-center gap-5 text-sm whitespace-nowrap">
-          {/* Current */}
-          <div className="flex gap-2">
-            <span className="text-slate-500 font-semibold">Current:</span>
-            <span className="text-slate-500 font-medium">{currentProb}</span>
-          </div>
+      <div className="flex items-center gap-8 whitespace-nowrap">
+        {/* Current */}
+        <div className="flex flex-col items-end">
+          <span className="text-xl font-black text-slate-400 uppercase tracking-widest">Current</span>
+          <span className="text-3xl font-bold text-slate-400">{currentProb}</span>
+        </div>
 
-          {/* New */}
-          <div className="flex gap-2 text-base">
-            <span className="text-slate-600 font-bold">New:</span>
-            <span className="font-black text-black">{targetProb}</span>
-          </div>
+        {/* Arrow */}
+        <span className="text-slate-200 font-bold text-2xl">→</span>
 
-          {/* Gain */}
-          <div className="flex gap-2 text-base">
-            <span className="text-slate-600 font-bold">Gain:</span>
-            <span className="font-black text-emerald-600">{gain}</span>
-          </div>
+        {/* New */}
+        <div className="flex flex-col items-end">
+          <span className="text-xl font-black text-slate-400 uppercase tracking-widest">Expected</span>
+          <span className="text-3xl font-black text-slate-900">{targetProb}</span>
+        </div>
+
+        {/* Gain */}
+        <div className="flex flex-col items-end bg-emerald-50 px-4 py-1 rounded-lg border border-emerald-100">
+          <span className="text-xl font-black text-emerald-600 uppercase tracking-widest text-right">Probability Gain</span>
+          <span className="text-3xl font-black text-emerald-600">{gain}</span>
         </div>
       </div>
     </div>

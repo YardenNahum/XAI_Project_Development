@@ -8,21 +8,14 @@ export default function LimeCard({ data }) {
 
   if (!data || !data.Type) return null;
 
-  /**
-   * 1. PREDICTION SORTING LOGIC - Sort predictions by confidence for display in the header
-   *    - Convert the predictions object into an array of {label, value} objects
-   *    - Sort the array in descending order based on the confidence value
-   */
   const sortedPredictions = data.Prediction 
     ? Object.entries(data.Prediction)
         .map(([label, value]) => ({ label, value }))
         .sort((a, b) => b.value - a.value)
     : [];
 
-  // limit view for tabular features to 5 by default, with option to expand and show all
   const INITIAL_LIMIT = 5; 
   const featureList = data.features || [];
-  // Only show the "View All" button if it's Tabular and has more than 5 features
   const shouldShowTabularExpand = data.Type === 'Tabular' && featureList.length > INITIAL_LIMIT;
 
   const displayFeatures = isExpanded 
@@ -30,54 +23,54 @@ export default function LimeCard({ data }) {
     : featureList.slice(0, INITIAL_LIMIT);
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-100 p-6 md:p-8 shadow-sm transition-all duration-300">
+    <div className="bg-white rounded-[1.5rem] border-2 border-slate-200 p-6 md:p-8 shadow-md">
       
-      {/* header */}
-      <div className="flex items-center gap-3 mb-8">
-        <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl">
-          <Target size={20} className="stroke-[2.5]" />
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-5">
+        <div className="p-2.5 bg-indigo-50 text-indigo-700 rounded-xl">
+          <Target size={24} className="stroke-[3]" />
         </div>
         <div className="flex flex-col">
-          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
-            Local Explanation
-          </span>
-          <h3 className="text-xl font-extrabold text-slate-900 tracking-tight leading-none">
+          <h3 className="text-4xl font-black text-slate-900 tracking-tight leading-none">
             LIME Feature Impact
           </h3>
         </div>
       </div>
 
-      {/*the model prediction*/}
+      {/* Model Prediction - FIXED: BLUE FIRST, ORANGE SECOND */}
       {sortedPredictions.length > 0 && (
-        <div className="mb-8 space-y-4">
-          <div className="flex items-center gap-2">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+        <div className="mb-6 space-y-3">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
               Model Prediction Confidence
             </span>
-            <div className="h-px flex-1 bg-slate-100" />
+            <div className="h-[2px] flex-1 bg-slate-100" />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {sortedPredictions.map((pred, idx) => (
-              <div 
-                key={pred.label} 
-                className={`p-4 rounded-2xl border flex justify-between items-center bg-white shadow-sm transition-all
-                  ${idx === 1 ? 'border-orange-200 ring-1 ring-orange-100' : 'border-blue-100 opacity-80'}`}
-              >
-                <span className={`text-xs font-black uppercase tracking-tight ${idx === 1 ? 'text-orange-500' : 'text-blue-500'}`}>
-                  {pred.label}
-                </span>
-                <span className={`text-2xl font-mono font-black ${idx === 1 ? 'text-orange-600' : 'text-blue-600'}`}>
-                  {(pred.value * 100).toFixed(1)}%
-                </span>
-              </div>
-            ))}
+            {sortedPredictions.map((pred, idx) => {
+              const isFirst = idx === 0;
+              return (
+                <div 
+                  key={pred.label} 
+                  className={`p-4 rounded-2xl border flex justify-between items-center bg-white shadow-sm
+                    ${isFirst ? 'border-blue-200 ring-1 ring-blue-100' : 'border-orange-100 opacity-90'}`}
+                >
+                  <span className={`text-3xl font-black uppercase tracking-tight ${isFirst ? 'text-blue-600' : 'text-orange-500'}`}>
+                    {pred.label}
+                  </span>
+                  <span className={`text-4xl font-mono font-black ${isFirst ? 'text-blue-700' : 'text-orange-600'}`}>
+                    {(pred.value * 100).toFixed(1)}%
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
 
-      {/* show either the tabular or the lime */}
-      <div className="space-y-6">
+      {/* View Logic */}
+      <div className="space-y-4">
         {(() => {
           switch (data.Type) {
             case 'Textual':
@@ -85,6 +78,7 @@ export default function LimeCard({ data }) {
                 <TextualLimeView 
                   text={data.Original_Text} 
                   features={data.features}
+                  predictions={data.Prediction}
                 />
               );
             case 'Tabular':
@@ -94,32 +88,32 @@ export default function LimeCard({ data }) {
                 />
               );
             default:
-              return <div className="p-6 text-center text-rose-500">Unknown Format</div>;
+              return <div className="p-6 text-center text-rose-600 font-bold text-xl">Unknown Format</div>;
           }
         })()}
       </div>
 
-      {/* expand if its the tabular lime */}
+      {/* Expand Button */}
       {shouldShowTabularExpand && (
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full cursor-pointer mt-6 py-3 flex items-center justify-center gap-2 text-xs font-black text-indigo-600 bg-indigo-50/50 rounded-xl hover:bg-indigo-100 transition-all border border-indigo-100/50 active:scale-[0.98]"
+          className="w-full mt-5 py-4 flex items-center justify-center gap-3 text-xs font-black text-indigo-700 bg-indigo-50 rounded-xl border-2 border-indigo-100 hover:bg-indigo-100 transition-all"
         >
           {isExpanded ? (
-            <><span className="uppercase tracking-widest">Show Less</span> <ChevronUp size={14} /></>
+            <><span className="uppercase tracking-[0.2em]">Show Less</span> <ChevronUp size={16} strokeWidth={3} /></>
           ) : (
-            <><span className="uppercase tracking-widest">View All {featureList.length} Features</span> <ChevronDown size={14} /></>
+            <><span className="uppercase tracking-[0.2em]">View All {featureList.length} Features</span> <ChevronDown size={16} strokeWidth={3} /></>
           )}
         </button>
       )}
       
-      {/* FOOTER POLISH */}
-      <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-center gap-2">
-        <div className="h-1 w-1 bg-slate-300 rounded-full" />
-        <span className="text-[10px] font-black text-slate-400 uppercase tracking-tight">
-          LIME approximates the model locally for this specific instance.
+      {/* Footer */}
+      <div className="mt-8 pt-6 border-t-2 border-slate-100 flex items-center justify-center gap-3">
+        <div className="h-1.5 w-1.5 bg-slate-300 rounded-full" />
+        <span className="text-[10px] font-black text-slate-500 uppercase tracking-wide text-center">
+          LIME approximates the model locally for this specific instance
         </span>
-        <div className="h-1 w-1 bg-slate-300 rounded-full" />
+        <div className="h-1.5 w-1.5 bg-slate-300 rounded-full" />
       </div>
     </div>
   );
