@@ -2,7 +2,6 @@ import { Outlet } from 'react-router-dom'
 import Navbar from '../Components/NavigationBar.jsx' 
 import AboutPage from '../Components/Pages/AboutPage.jsx';
 import DomainPage from '../Components/Pages/SystemsPage.jsx';
-import FinalPage from '../Components/Pages/FinalPage.jsx';
 import { StudyProvider } from '../Components/StudyContext';
 
 export default function App() {

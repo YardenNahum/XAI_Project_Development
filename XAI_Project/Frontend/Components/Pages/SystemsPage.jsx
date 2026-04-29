@@ -1,55 +1,50 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Activity, Database, Loader2, ArrowRight } from 'lucide-react';
-import { useStudy } from '../StudyContext.jsx'; 
+import { useParams } from 'react-router-dom';
+import { Loader2, X, Brain, Zap, Target } from 'lucide-react';
 import ShapCard from '../UI/Shap/ShapCard.jsx';
 import LimeCard from '../UI/Lime/LimeCard.jsx';
 import DiceCard from '../UI/Dice/DiceCard.jsx';
-import SurveyFrame from '../UI/SurveyFrame.jsx'; 
 import { fetchReport } from '../../Services/Reports_Service.jsx'; 
 import StudySteps from '../UI/StudySteps.jsx';
-
-const SURVEY_MAP = {
-  'Diabities_System': 'https://qualtricsxmbfqlkh8c3.qualtrics.com/jfe/form/SV_4UiCFgzpWp5HvGm',
-  'HR_Report': 'https://qualtricsxmbfqlkh8c3.qualtrics.com/jfe/form/SV_cUw1SGokPthpwb4',
-  'LLM_Report': 'https://qualtricsxmbfqlkh8c3.qualtrics.com/jfe/form/SV_6LoneqSZ6Vm0gFE'
-};
-
+// Mapping for initial predictions based on domain
 const predictionMap = { 'Diabities_System': 1, 'HR_Report': 4, 'LLM_Report': 1000 };
 
+/**
+ * 
+ * Renders the domain-specific page showing the AI prediction, input data, and explanations (SHAP, LIME, DiCE).
+ * Fetches the report data on mount and processes it for display. Also includes a help sidebar that can be toggled.
+ * @returns 
+ */
 export default function DomainPage() {
+  // Get the domain ID from the URL parameters
   const { domainId } = useParams();
-  const navigate = useNavigate();
-  const { domainOrder, markAsComplete, completedSurveys } = useStudy();
+  // State for the processed report data, loading state, and help sidebar visibility
   const [processedReport, setProcessedReport] = useState(null);
+  // State to track if the report data is still loading
   const [isLoading, setIsLoading] = useState(true);
+  // State to control whether to show all input data or just a subset
   const [showAll, setShowAll] = useState(false);
-  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isHelpOpen, setIsHelpOpen] = useState(false);
 
-  const currentSurveyUrl = SURVEY_MAP[domainId] || SURVEY_MAP['Diabities_System'];
-
-  useEffect(() => {
-    setIsUnlocked(false);
-    const lockTimer = setTimeout(() => setIsUnlocked(true), 20000);
-    return () => clearTimeout(lockTimer);
-  }, [domainId]);
-
+  // Fetch and process the report data when the component mounts or when the domainId changes
   useEffect(() => {
     let isMounted = true;
     const loadData = async () => {
       setIsLoading(true);
       try {
+        // Fetch the report data for the given domain ID and initial prediction
         const data = await fetchReport(domainId, predictionMap[domainId] || 0);
         if (isMounted && data) {
           const isHigh = String(data.Prediction.prediction).includes("1") || 
-                         ["diabetic", "leave", "high", "ai"].some(w => String(data.Prediction.prediction).toLowerCase().includes(w));
-          
+                        ["diabetic", "leave", "high", "ai"].some(w => String(data.Prediction.prediction).toLowerCase().includes(w));
+          // Prioritize certain features for display based on the domain
           let evidence = data.Original_Data;
           const priorityMap = {
             'Diabities_System': ['age', 'bmi', 'glucose fasting', 'glucose postprandial', 'hba1c'],
             'HR_Report': ['overtime', 'monthlyincome', 'joblevel', 'department','educationfield']
           };
 
+          // Sort evidence based on priority list, placing prioritized features first
           const priority = priorityMap[domainId] || [];
           evidence = [...data.Original_Data].sort((a, b) => {
             const aIndex = priority.indexOf(a.feature.toLowerCase());
@@ -65,18 +60,7 @@ export default function DomainPage() {
     loadData();
     return () => { isMounted = false; };
   }, [domainId]);
-
-  const handleNextStep = () => {
-    markAsComplete(domainId);
-    const updatedCompleted = new Set(completedSurveys);
-    updatedCompleted.add(domainId);
-    const nextUnfinished = domainOrder.find(id => !updatedCompleted.has(id));
-    if (nextUnfinished) {
-      navigate(`/${nextUnfinished}`);
-      window.scrollTo(0, 0);
-    } else { navigate('/thank-you'); }
-  };
-
+ // Helper function to format values
   const formatValue = (val, forceFull = false) => {
     if (typeof val !== 'string') return String(val);
     if (domainId === 'LLM_Report' && !forceFull) {
@@ -85,85 +69,65 @@ export default function DomainPage() {
     }
     return val;
   };
-
+  // Show loading spinner while data is being fetched
   if (isLoading || !processedReport) return <div className="h-screen flex items-center justify-center bg-slate-50"><Loader2 className="animate-spin text-indigo-500 w-10 h-10" /></div>;
-
-  const isLastTaskOverall = (completedSurveys.size + (completedSurveys.has(domainId) ? 0 : 1)) === domainOrder.length;
-  
-  const NavigationButton = (
-    <button 
-      onClick={handleNextStep}
-      disabled={!isUnlocked}
-      className={`flex items-center justify-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all ${
-        !isUnlocked ? 'bg-slate-200 text-slate-400 border border-slate-300 cursor-not-allowed' : isLastTaskOverall ? 'bg-emerald-500 text-white hover:bg-emerald-600' : 'bg-indigo-600 text-white hover:bg-indigo-700'
-      }`}
-    >
-      {!isUnlocked ? "Complete The Survey" : isLastTaskOverall ? <>Finished Study <ArrowRight size={14} /></> : <>Completed Survey <ArrowRight size={14} /></>}
-    </button>
-  );
-
-  // Helper to determine the profile type
-  const getProfileSubject = () => {
-    if (domainId === 'Diabities_System') return "the patient";
-    if (domainId === 'HR_Report') return "the employee";
-    return "the document";
-  };
-
+  // Determine which input data to show based on the showAll state
   const visibleData = showAll ? processedReport.evidence : processedReport.evidence.slice(0, 6);
 
   return (
-    <div className="flex flex-col lg:flex-row lg:gap-8 p-4 lg:p-10 bg-slate-50 min-h-screen">
-      <div className="flex-1 space-y-6 min-w-0 pb-10">
-        <StudySteps />
-        
-        <div className="bg-white border-2 border-slate-200 rounded-[3rem] p-12 lg:p-16 shadow-md space-y-12">
+    <div className="relative bg-slate-50 min-h-screen overflow-x-hidden">
+      
+      {/* Main Content*/}
+      <div className={`transition-all duration-300 p-6 lg:p-12 ${isHelpOpen ? 'mr-[400px]' : 'mr-0'}`}>
+          <div className="max-w-none mx-0 space-y-8 flex flex-col items-start">
           
-          <div className="flex items-center gap-8 border-b-2 border-slate-50 pb-8">
-            <span className="text-3xl md:text-4xl font-semibold text-slate-900 tracking-tight">Prediction:</span>
-            <span className={`px-12 py-4 rounded-[2rem] border-[4px] font-black text-4xl md:text-6xl uppercase tracking-tighter shadow-xl ${
-              processedReport.isHigh ? 'bg-rose-50 border-rose-300 text-rose-600' : 'bg-emerald-50 border-emerald-300 text-emerald-600'
-            }`}>
-              {processedReport.Prediction.prediction}
-            </span>
+          {/* Help Center Bar */}
+          <div className="w-full">
+            <StudySteps onHelpClick={() => setIsHelpOpen(!isHelpOpen)} />
           </div>
+          
+          {/* AI Prediction Card */}
+          <div className="w-full bg-white border-2 border-slate-200 rounded-[3rem] p-10 lg:p-14 shadow-md space-y-10">
+            <div className="flex items-center gap-8 border-b-2 border-slate-50 pb-8">
+              <span className="text-3xl font-semibold text-slate-900 tracking-tight">AI Prediction:</span>
+              <span className={`px-10 py-3 rounded-[1.5rem] border-[4px] font-black text-3xl uppercase tracking-tighter shadow-xl ${
+                processedReport.isHigh ? 'bg-rose-50 border-rose-300 text-rose-600' : 'bg-emerald-50 border-emerald-300 text-emerald-600'
+              }`}>
+                {processedReport.Prediction.prediction}
+              </span>
+            </div>
 
-          <div className="space-y-6">
-            <span className="font-bold text-slate-600 uppercase tracking-[0.3em] text-2xl block">Input Data:</span>
-            
-            <div className="text-3xl md:text-4xl text-slate-900 leading-[1.6] font-medium p-10 bg-slate-50 rounded-[2.5rem] border-2 border-slate-200">
-              <span className="font-bold">The data of {getProfileSubject()}: </span>
-              {visibleData.map((item, i, arr) => (
-                <span key={i}>
-                  {i === 0 ? "" : i === arr.length - 1 ? ", and " : ", "}
-                  <span className="text-slate-800">{item.feature.replace(/_/g, ' ')}</span>
-                  <span> is </span>
-                  <strong className="font-black text-black underline decoration-slate-400 underline-offset-[8px]">
-                    {formatValue(String(item.value), showAll)}
-                  </strong>
-                </span>
-              ))}
-              <span>.</span>
+            <div className="space-y-6">
+              <span className="font-bold text-slate-600 uppercase tracking-[0.3em] text-xl block text-left">Input Data:</span>
+              <div className="text-2xl md:text-2xl text-slate-900 leading-[1.6] font-medium p-10 bg-slate-50 rounded-[2.5rem] border-2 border-slate-200 text-left">
+                {visibleData.map((item, i, arr) => (
+                  <span key={i}>
+                    {i === 0 ? "" : i === arr.length - 1 ? ", and " : ", "}
+                    <span className="text-slate-800">{item.feature.replace(/_/g, ' ')}</span>
+                    <span> is </span>
+                    <strong className="font-black text-black underline underline-offset-8 decoration-slate-300">
+                      {formatValue(String(item.value), showAll)}
+                    </strong>
+                  </span>
+                ))}
+                <span>.</span>
+              </div>
+              <div className="flex justify-start">
+                <button onClick={() => setShowAll(!showAll)} className="text-sm cursor-pointer font-bold text-indigo-600 uppercase tracking-widest hover:underline">
+                  {showAll ? "↑ Hide Data" : "↓ View All Data"}
+                </button>
+              </div>
             </div>
           </div>
 
-          <div className="flex justify-start">
-            <button 
-              onClick={() => setShowAll(!showAll)}
-              className="px-10 py-4 bg-white border-2 border-slate-200 rounded-2xl text-sm font-black text-slate-600 uppercase tracking-widest hover:border-black transition-all shadow-md active:scale-95"
-            >
-              {showAll ? "↑ Hide Profile Details" : `↓ View Full Data Profile`}
-            </button>
+          {/* Explanation Cards */}
+          <div className="w-full space-y-8 pb-20">
+            <ShapCard data={processedReport.explanations.shap} />
+            <LimeCard data={processedReport.explanations.lime} />
+            <DiceCard data={processedReport.explanations.dice} />
           </div>
         </div>
-
-        <ShapCard data={processedReport.explanations.shap} />
-        <LimeCard data={processedReport.explanations.lime} />
-        <DiceCard data={processedReport.explanations.dice} />
-      </div>
-
-      <div className="hidden lg:block w-[450px] xl:w-[500px] shrink-0 sticky top-10 h-[calc(100vh-80px)]">
-        <SurveyFrame url={currentSurveyUrl} domainId={domainId} navButton={NavigationButton} />
-      </div>
+      </div>     
     </div>
   );
 }

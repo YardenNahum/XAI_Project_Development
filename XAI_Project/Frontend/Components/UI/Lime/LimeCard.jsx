@@ -2,22 +2,29 @@ import React, { useState } from 'react';
 import { Target, ChevronDown, ChevronUp } from 'lucide-react'; 
 import TextualLimeView from './TextualLimeView.jsx';
 import TabularLimeView from './TabularLimeView.jsx';
-
+/**
+ * LimeCard component for displaying LIME feature impacts
+ * This component takes in LIME explanation data and renders a card that shows the model's prediction confidence for each class, as well as the feature impacts.
+ * It supports both textual and tabular data formats, with different views for each. For tabular data, it also includes an expand/collapse feature to show more or fewer features.
+ * @param {*} param0 
+ * @returns 
+ */
 export default function LimeCard({ data }) {
+  // controling the expand/collapse state for tabular features  
   const [isExpanded, setIsExpanded] = useState(false);
-
+// If no data or type is provided, render nothing
   if (!data || !data.Type) return null;
-
+// Sort predictions to show the highest confidence first
   const sortedPredictions = data.Prediction 
     ? Object.entries(data.Prediction)
         .map(([label, value]) => ({ label, value }))
         .sort((a, b) => b.value - a.value)
     : [];
-
+  // For tabular data, determine if we should show the expand button based on the number of features
   const INITIAL_LIMIT = 5; 
   const featureList = data.features || [];
   const shouldShowTabularExpand = data.Type === 'Tabular' && featureList.length > INITIAL_LIMIT;
-
+// Sort features to show the highest impact first
   const displayFeatures = isExpanded 
     ? featureList 
     : featureList.slice(0, INITIAL_LIMIT);
@@ -31,17 +38,17 @@ export default function LimeCard({ data }) {
           <Target size={24} className="stroke-[3]" />
         </div>
         <div className="flex flex-col">
-          <h3 className="text-4xl font-black text-slate-900 tracking-tight leading-none">
+          <h3 className="text-2xl font-black text-slate-900 tracking-tight leading-none">
             LIME Feature Impact
           </h3>
         </div>
       </div>
 
-      {/* Model Prediction - FIXED: BLUE FIRST, ORANGE SECOND */}
+      {/* Model Prediction */}
       {sortedPredictions.length > 0 && (
         <div className="mb-6 space-y-3">
           <div className="flex items-center gap-3">
-            <span className="text-2xl font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
+            <span className="text-lg font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">
               Model Prediction Confidence
             </span>
             <div className="h-[2px] flex-1 bg-slate-100" />
@@ -56,10 +63,10 @@ export default function LimeCard({ data }) {
                   className={`p-4 rounded-2xl border flex justify-between items-center bg-white shadow-sm
                     ${isFirst ? 'border-blue-200 ring-1 ring-blue-100' : 'border-orange-100 opacity-90'}`}
                 >
-                  <span className={`text-3xl font-black uppercase tracking-tight ${isFirst ? 'text-blue-600' : 'text-orange-500'}`}>
+                  <span className={`text-2xl font-black uppercase tracking-tight ${isFirst ? 'text-blue-600' : 'text-orange-500'}`}>
                     {pred.label}
                   </span>
-                  <span className={`text-4xl font-mono font-black ${isFirst ? 'text-blue-700' : 'text-orange-600'}`}>
+                  <span className={`text-2xl font-mono font-black ${isFirst ? 'text-blue-700' : 'text-orange-600'}`}>
                     {(pred.value * 100).toFixed(1)}%
                   </span>
                 </div>
@@ -97,7 +104,7 @@ export default function LimeCard({ data }) {
       {shouldShowTabularExpand && (
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="w-full mt-5 py-4 flex items-center justify-center gap-3 text-xs font-black text-indigo-700 bg-indigo-50 rounded-xl border-2 border-indigo-100 hover:bg-indigo-100 transition-all"
+          className="w-full cursor-pointer mt-5 py-4 flex items-center justify-center gap-3 text-xs font-black text-indigo-700 bg-indigo-50 rounded-xl border-2 border-indigo-100 hover:bg-indigo-100 transition-all"
         >
           {isExpanded ? (
             <><span className="uppercase tracking-[0.2em]">Show Less</span> <ChevronUp size={16} strokeWidth={3} /></>
