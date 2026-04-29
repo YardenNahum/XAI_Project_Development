@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-
+/**
+ * FeatureCard component for displaying feature information in a card format.
+ * This component takes in a label and a value, and displays them in a styled card. If the value is too long, it truncates the text and provides an option to expand and view the full text.
+ * @param {*} param0 
+ * @returns 
+ */
 export default function FeatureCard({ label, value }) {
   const [isExpanded, setIsExpanded] = useState(false);
   

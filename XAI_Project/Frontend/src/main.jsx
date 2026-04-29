@@ -4,7 +4,6 @@ import './index.css'
 import App from './App.jsx'
 import { createHashRouter, RouterProvider, Navigate } from 'react-router-dom'
 import AboutPage from '../Components/Pages/AboutPage.jsx';
-import FinalPage from '../Components/Pages/FinalPage.jsx';
 import DomainPage from '../Components/Pages/SystemsPage.jsx';
 const router = createHashRouter([
   {
@@ -19,10 +18,6 @@ const router = createHashRouter([
       {
         path: "about",
         element: <AboutPage />
-      },
-      {
-        path: "thank-you",
-        element: <FinalPage />
       },
       {
         path: ":domainId",
