@@ -1,99 +1,93 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { HelpCircle, Brain, Zap, Target, X } from 'lucide-react';
-
+/**
+ * StudySteps is a React component that provides a user guide for the XAI methodology used in the study. 
+ * It features a button that, when clicked, opens a sidebar containing explanations of the three XAI methods: SHAP (Global), LIME (Local), and DiCE (What-If). 
+ * The sidebar includes a background overlay to focus attention on the content and can be closed by clicking outside the sidebar or on the close button.
+ * @returns 
+ */
 export default function StudySteps() {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
-
-  return (
+  const sidebarContent = (
     <>
-      {/* Resized Bluish Help Button */}
-      <div className="flex justify-start">
-        <button 
-          onClick={() => setIsHelpOpen(true)}
-          className="group flex items-center gap-3 px-7 py-4 bg-blue-50 border-2 border-blue-200 text-blue-700 rounded-2xl cursor-pointer hover:bg-blue-100 transition-all shadow-md active:scale-95"
-        >
-          <HelpCircle size={22} />
-          <div className="flex flex-col items-start text-left">
-            <span className="text-[13px] font-black uppercase tracking-widest leading-tight">User Help</span>
-            <span className="text-[11px] font-bold opacity-70 uppercase tracking-tight">System Guide</span>
-          </div>
-        </button>
-      </div>
+      {/* Background Overlay*/}
+      <div 
+        className={`fixed inset-0 bg-slate-900/40 z-[9998] transition-opacity duration-300 ${
+          isHelpOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={() => setIsHelpOpen(false)}
+      />
 
-      {/* Help Sidebar */}
-      <div className={`fixed top-0 right-0 h-full w-[450px] bg-white border-l-2 border-slate-200 shadow-2xl transition-transform duration-300 z-[100] p-12 overflow-y-auto ${isHelpOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-        <div className="flex items-center justify-between mb-16">
-          <h2 className="text-3xl font-black text-black uppercase tracking-tighter text-left">System Guide</h2>
-          <button onClick={() => setIsHelpOpen(false)} className="p-2 cursor-pointer hover:bg-slate-100 rounded-full transition-all">
-            <X size={28} className="text-black" />
+      {/* The Sidebar */}
+      <div className={`fixed top-0 right-0 h-full bg-white z-[9999] shadow-2xl transition-transform duration-300 ease-in-out overflow-y-auto
+        w-full sm:w-[450px] 
+        ${isHelpOpen ? 'translate-x-0' : 'translate-x-full'}`}
+      >
+        <div className="flex items-center justify-between p-6 md:p-12 border-b border-slate-100 sticky top-0 bg-white z-10">
+          <div className="flex flex-col text-left">
+            <h2 className="text-2xl md:text-3xl font-black text-black uppercase tracking-tighter">System Guide</h2>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">XAI Methodology</p>
+          </div>
+          <button 
+            onClick={() => setIsHelpOpen(false)} 
+            className="p-4 bg-slate-100 rounded-full active:bg-rose-500 active:text-white transition-all shadow-sm"
+          >
+            <X size={24} strokeWidth={3} />
           </button>
         </div>
 
-        <div className="space-y-12 text-left">
-          {/* SHAP Section */}
-          <section className="space-y-5">
-            <div className="flex items-center gap-3 border-b-2 border-slate-200 pb-3">
+        <div className="p-6 md:p-12 space-y-12 text-left pb-32">
+          <section className="space-y-4">
+            <div className="flex items-center gap-3 border-b-2 border-indigo-50 pb-2">
               <Brain size={24} className="text-indigo-600 shrink-0" />
-              <h3 className="font-black text-2xl uppercase tracking-tight text-black text-left">SHAP (Global)</h3>
+              <h3 className="font-black text-xl uppercase tracking-tight text-black">SHAP (Global)</h3>
             </div>
-            <div className="space-y-4 text-black text-[18px] leading-relaxed text-left">
-              <p className="font-bold">
-                The SHAP chart shows how much each specific patient feature contributes to the final prediction.
-              </p>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-3">
-                  <div className="mt-2.5 w-2 h-2 rounded-full bg-black shrink-0" />
-                  <span>Features are ranked by total impact.</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="mt-2.5 w-2 h-2 rounded-full bg-black shrink-0" />
-                  <span>The length of the bar shows the feature's influence.</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="mt-2.5 w-2 h-2 rounded-full bg-black shrink-0" />
-                  <span>The value (+/-) next to each bar shows the exact contribution for this specific case.</span>
-                </li>
-              </ul>
-            </div>
+            <p className="text-slate-800 text-[17px] leading-relaxed">
+              Shows how much each specific feature contributes to the final prediction.
+            </p>
           </section>
 
-          {/* LIME Section */}
-          <section className="space-y-5">
-            <div className="flex items-center gap-3 border-b-2 border-slate-200 pb-3">
+          <section className="space-y-4">
+            <div className="flex items-center gap-3 border-b-2 border-orange-50 pb-2">
               <Zap size={24} className="text-orange-500 shrink-0" />
-              <h3 className="font-black text-2xl uppercase tracking-tight text-black text-left">LIME (Local)</h3>
+              <h3 className="font-black text-xl uppercase tracking-tight text-black">LIME (Local)</h3>
             </div>
-            <div className="space-y-4 text-black text-[18px] leading-relaxed text-left">
-              <p className="font-bold">
-                LIME shows exactly which feature of the information influenced this specific outcome the most.
-              </p>
-              <p>
-                Each feature is given a score: some add weight pushing toward the final decision, while others remove weight from it. This allows you to see exactly why the AI made this specific prediction.
-              </p>
-            </div>
+            <p className="text-slate-800 text-[17px] leading-relaxed">
+              Shows factors adding or removing weight toward the specific prediction.
+            </p>
           </section>
 
-          {/* DiCE Section */}
-          <section className="space-y-5">
-            <div className="flex items-center gap-3 border-b-2 border-slate-200 pb-3">
+          <section className="space-y-4">
+            <div className="flex items-center gap-3 border-b-2 border-emerald-50 pb-2">
               <Target size={24} className="text-emerald-600 shrink-0" />
-              <h3 className="font-black text-2xl uppercase tracking-tight text-black text-left">DiCE (What-If)</h3>
+              <h3 className="font-black text-xl uppercase tracking-tight text-black">DiCE (What-If)</h3>
             </div>
-            <div className="space-y-4 text-black text-[18px] leading-relaxed text-left">
-              <p className="font-bold">
-                The DiCE table explains the AI's decision by providing "what-if" scenarios.
-              </p>
-              <p>
-                Instead of showing what caused the current prediction, it shows exactly what minimum changes to the data that would be needed to flip the AI's decision to the opposite outcome.
-              </p>
-            </div>
+            <p className="text-slate-800 text-[17px] leading-relaxed">
+              Minimum changes needed to flip the AI's decision to the opposite result.
+            </p>
           </section>
-        </div>
-
-        <div className="mt-20 py-10 border-t border-slate-200 text-black text-[12px] uppercase tracking-[0.2em] font-black text-center">
-          End of Guide
         </div>
       </div>
+    </>
+  );
+
+  return (
+    <>
+      <div className="flex justify-start">
+        <button 
+          onClick={() => setIsHelpOpen(true)}
+          className="group flex items-center gap-2 px-5 py-3 bg-blue-50 border-2 border-blue-200 text-blue-700 rounded-xl cursor-pointer hover:bg-blue-100 transition-all active:scale-95 shadow-sm"
+        >
+          <HelpCircle size={18} />
+          <div className="flex flex-col items-start text-left">
+            <span className="text-[11px] font-black uppercase tracking-widest leading-tight">User Help</span>
+            <span className="text-[9px] font-bold opacity-60 uppercase tracking-tight">Guide</span>
+          </div>
+        </button>
+      </div>
+      {/* Sidebar rendering with react portal to make it full screen in mobile*/}
+      {createPortal(sidebarContent, document.body)}
     </>
   );
 }
