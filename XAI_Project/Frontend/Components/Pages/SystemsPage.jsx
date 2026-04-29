@@ -5,7 +5,6 @@ import ShapCard from '../UI/Shap/ShapCard.jsx';
 import LimeCard from '../UI/Lime/LimeCard.jsx';
 import DiceCard from '../UI/Dice/DiceCard.jsx';
 import { fetchReport } from '../../Services/Reports_Service.jsx'; 
-import StudySteps from '../UI/StudySteps.jsx';
 // Mapping for initial predictions based on domain
 const predictionMap = { 'Diabities_System': 1, 'HR_Report': 4, 'LLM_Report': 1000 };
 
@@ -80,11 +79,6 @@ export default function DomainPage() {
       {/* Main Content*/}
       <div className={`transition-all duration-300 p-6 lg:p-12 ${isHelpOpen ? 'mr-[400px]' : 'mr-0'}`}>
           <div className="max-w-none mx-0 space-y-8 flex flex-col items-start">
-          
-          {/* Help Center Bar */}
-          <div className="w-full">
-            <StudySteps onHelpClick={() => setIsHelpOpen(!isHelpOpen)} />
-          </div>
           
           {/* AI Prediction Card */}
           <div className="w-full bg-white border-2 border-slate-200 rounded-[3rem] p-10 lg:p-14 shadow-md space-y-10">

@@ -1,54 +1,29 @@
 import React, { useState } from 'react';
 import { HelpCircle, Brain, Zap, Target, X } from 'lucide-react';
-/**
- * StudySteps component that provides an overview of the different explanation methods (SHAP, LIME, DiCE) 
- * used in the study, along with a help guide that explains how to interpret each type of explanation.
- * @returns 
- */
+
 export default function StudySteps() {
   const [isHelpOpen, setIsHelpOpen] = useState(false);
-  // Mapping for the guide icons and colors
-  const guides = [
-    { id: 1, label: "Global Impact (SHAP)", icon: <Brain size={14} />, color: "text-indigo-700", bg: "bg-indigo-600" },
-    { id: 2, label: "Local Reasoning (LIME)", icon: <Zap size={14} />, color: "text-orange-700", bg: "bg-orange-500" },
-    { id: 3, label: "What-If Analysis (DiCE)", icon: <Target size={14} />, color: "text-emerald-700", bg: "bg-emerald-600" }
-  ];
 
   return (
     <>
-    {/* Header with Guide and Help Button */}
-      <nav className="w-full bg-white border-2 border-slate-200 p-8 rounded-[2.5rem] shadow-sm text-left">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-10">
-            {guides.map((guide) => (
-              <div key={guide.id} className="flex items-center gap-4">
-                <div className={`flex items-center justify-center w-10 h-10 rounded-xl shadow-sm ${guide.bg} text-white shrink-0`}>
-                  {guide.icon}
-                </div>
-                <span className={`text-sm font-black uppercase tracking-wider ${guide.color}`}>
-                  {guide.label}
-                </span>
-              </div>
-            ))}
+      {/* Resized Bluish Help Button */}
+      <div className="flex justify-start">
+        <button 
+          onClick={() => setIsHelpOpen(true)}
+          className="group flex items-center gap-3 px-7 py-4 bg-blue-50 border-2 border-blue-200 text-blue-700 rounded-2xl cursor-pointer hover:bg-blue-100 transition-all shadow-md active:scale-95"
+        >
+          <HelpCircle size={22} />
+          <div className="flex flex-col items-start text-left">
+            <span className="text-[13px] font-black uppercase tracking-widest leading-tight">User Help</span>
+            <span className="text-[11px] font-bold opacity-70 uppercase tracking-tight">System Guide</span>
           </div>
-          {/* Help Button */}
-          <button 
-            onClick={() => setIsHelpOpen(true)}
-            className="group flex items-center gap-3 px-8 py-5 bg-slate-900 text-white rounded-2xl cursor-pointer hover:bg-indigo-600 transition-all shadow-xl active:scale-95"
-          >
-            <HelpCircle size={24} />
-            <div className="flex flex-col items-start text-left">
-              <span className="text-xs font-black uppercase tracking-[0.2em]">Open System</span>
-              <span className="text-[10px] font-bold opacity-70 uppercase tracking-widest">Help Guide</span>
-            </div>
-          </button>
-        </div>
-      </nav>
+        </button>
+      </div>
 
       {/* Help Sidebar */}
       <div className={`fixed top-0 right-0 h-full w-[450px] bg-white border-l-2 border-slate-200 shadow-2xl transition-transform duration-300 z-[100] p-12 overflow-y-auto ${isHelpOpen ? 'translate-x-0' : 'translate-x-full'}`}>
         <div className="flex items-center justify-between mb-16">
-          <h2 className="text-3xl font-black text-black uppercase tracking-tighter">System Guide</h2>
+          <h2 className="text-3xl font-black text-black uppercase tracking-tighter text-left">System Guide</h2>
           <button onClick={() => setIsHelpOpen(false)} className="p-2 cursor-pointer hover:bg-slate-100 rounded-full transition-all">
             <X size={28} className="text-black" />
           </button>
@@ -57,11 +32,11 @@ export default function StudySteps() {
         <div className="space-y-12 text-left">
           {/* SHAP Section */}
           <section className="space-y-5">
-            <div className="flex items-center gap-3 border-b border-slate-200 pb-3">
+            <div className="flex items-center gap-3 border-b-2 border-slate-200 pb-3">
               <Brain size={24} className="text-indigo-600 shrink-0" />
-              <h3 className="font-black text-2xl uppercase tracking-tight text-black">SHAP (Global)</h3>
+              <h3 className="font-black text-2xl uppercase tracking-tight text-black text-left">SHAP (Global)</h3>
             </div>
-            <div className="space-y-4 text-black text-[18px] leading-relaxed">
+            <div className="space-y-4 text-black text-[18px] leading-relaxed text-left">
               <p className="font-bold">
                 The SHAP chart shows how much each specific patient feature contributes to the final prediction.
               </p>
@@ -84,11 +59,11 @@ export default function StudySteps() {
 
           {/* LIME Section */}
           <section className="space-y-5">
-            <div className="flex items-center gap-3 border-b border-slate-200 pb-3">
+            <div className="flex items-center gap-3 border-b-2 border-slate-200 pb-3">
               <Zap size={24} className="text-orange-500 shrink-0" />
-              <h3 className="font-black text-2xl uppercase tracking-tight text-black">LIME (Local)</h3>
+              <h3 className="font-black text-2xl uppercase tracking-tight text-black text-left">LIME (Local)</h3>
             </div>
-            <div className="space-y-4 text-black text-[18px] leading-relaxed">
+            <div className="space-y-4 text-black text-[18px] leading-relaxed text-left">
               <p className="font-bold">
                 LIME shows exactly which feature of the information influenced this specific outcome the most.
               </p>
@@ -100,11 +75,11 @@ export default function StudySteps() {
 
           {/* DiCE Section */}
           <section className="space-y-5">
-            <div className="flex items-center gap-3 border-b border-slate-200 pb-3">
+            <div className="flex items-center gap-3 border-b-2 border-slate-200 pb-3">
               <Target size={24} className="text-emerald-600 shrink-0" />
-              <h3 className="font-black text-2xl uppercase tracking-tight text-black">DiCE (What-If)</h3>
+              <h3 className="font-black text-2xl uppercase tracking-tight text-black text-left">DiCE (What-If)</h3>
             </div>
-            <div className="space-y-4 text-black text-[18px] leading-relaxed">
+            <div className="space-y-4 text-black text-[18px] leading-relaxed text-left">
               <p className="font-bold">
                 The DiCE table explains the AI's decision by providing "what-if" scenarios.
               </p>
