@@ -10,7 +10,10 @@ import {
 } from 'lucide-react';
 
 import ExplanationCard from '../UI/ExplanationCard';
-
+/**
+ * AboutPage is the landing page of the application that provides an overview of the project, its goals, the included domains, how to use the system, and the explanation methods. It also includes a call-to-action button that navigates to the first domain in the randomized order when clicked.
+ * @returns 
+ */
 export default function AboutPage() {
   const navigate = useNavigate();
   const { domainOrder } = useStudy();
